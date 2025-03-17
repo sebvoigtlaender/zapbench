@@ -21,8 +21,8 @@ import altair as alt
 import pandas as pd
 from zapbench import constants
 
-Chart = alt.vegalite.v4.api.Chart
-FacetChart = alt.vegalite.v4.api.FacetChart
+Chart = alt.Chart
+FacetChart = alt.FacetChart
 
 
 METHOD_TO_HEX_COLOR = collections.OrderedDict({

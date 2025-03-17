@@ -17,7 +17,7 @@ keywords = []
 # Installed locally with `pip install -e .`
 dependencies = [
   "absl-py",
-  "altair<5.0.0",
+  "altair>5.0.0",
   "chex",
   "clu",
   "connectomics",
