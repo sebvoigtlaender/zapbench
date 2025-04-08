@@ -334,8 +334,7 @@ def combine_input_and_prediction(
 ) -> chex.Array:
   # combine along temporal axis and crop t
   t_in = config.data_config.timesteps_input
-  with jax.spmd_mode('allow_all'):
-    return jnp.concatenate([condition, prediction], axis=1)[:, -t_in:]
+  return jnp.concatenate([condition, prediction], axis=1)[:, -t_in:]
 
 
 def infer(config: ml_collections.ConfigDict, infer_workdir: str):
@@ -581,29 +580,28 @@ def infer(config: ml_collections.ConfigDict, infer_workdir: str):
         logging.info('Global predictions shape %r', pred_frames.shape)
         logging.info('Trace predictions shape %r', pred_trace.shape)
 
-        with jax.spmd_mode('allow_all'):
-          gather = multihost_utils.process_allgather
-          t_slice = slice(i, i + timesteps_output)
-          if t % config.write_video_frequency == 0:
-            # remove batch and channel dimensions for video
-            video_writer.write_true(
-                t, t_slice, gather(output_frames[0, ..., 0])
-            )
-            video_writer.write_pred(t, t_slice, gather(pred_frames[0, ..., 0]))
-          if t % config.write_trace_frequency == 0:
-            # remove batch dimension
-            target_trace_out = gather(target_trace[0])
-            pred_trace_out = gather(pred_trace[0])
+        gather = multihost_utils.process_allgather
+        t_slice = slice(i, i + timesteps_output)
+        if t % config.write_video_frequency == 0:
+          # remove batch and channel dimensions for video
+          video_writer.write_true(
+              t, t_slice, gather(output_frames[0, ..., 0])
+          )
+          video_writer.write_pred(t, t_slice, gather(pred_frames[0, ..., 0]))
+        if t % config.write_trace_frequency == 0:
+          # remove batch dimension
+          target_trace_out = gather(target_trace[0])
+          pred_trace_out = gather(pred_trace[0])
 
-            # TODO(jan-matthis,mjanusz): confirm that this always holds
-            assert target_trace_out.shape[0] == 1
-            assert pred_trace_out.shape[0] == 1
-            target_trace_out = target_trace_out[0]
-            pred_trace_out = pred_trace_out[0]
+          # TODO(jan-matthis,mjanusz): confirm that this always holds
+          assert target_trace_out.shape[0] == 1
+          assert pred_trace_out.shape[0] == 1
+          target_trace_out = target_trace_out[0]
+          pred_trace_out = pred_trace_out[0]
 
-            trace_writer.write_true(t, t_slice, target_trace_out)
-            trace_writer.write_pred(t, t_slice, pred_trace_out)
-          temporal_metrics[i] = temporal_metrics[i].merge(metrics_update)
+          trace_writer.write_true(t, t_slice, target_trace_out)
+          trace_writer.write_pred(t, t_slice, pred_trace_out)
+        temporal_metrics[i] = temporal_metrics[i].merge(metrics_update)
         if not sample_lead_time and num_pred_steps > 1:
           # combine forecast with input for autoregressive forecast
           sample['input_frames'] = combine_input_and_prediction(
@@ -616,26 +614,25 @@ def infer(config: ml_collections.ConfigDict, infer_workdir: str):
           report_progress(t * num_pred_steps + i)
 
     if jax.process_index() == 0:
-      with jax.spmd_mode('allow_all'):
-        write_metrics(
-            writer, temporal_metrics, num_pred_steps, timesteps_output
+      write_metrics(
+          writer, temporal_metrics, num_pred_steps, timesteps_output
+      )
+      if config.infer_save_json:
+        ts_utils.write_json(
+            to_write=metrics_to_dict(
+                temporal_metrics, num_pred_steps, timesteps_output
+            ),
+            kvstore=os.path.join(
+                config.json_path_prefix.format(
+                    workdir=infer_workdir,
+                    base_path=config.base_path,
+                    xm_id=config.xm_id,
+                    work_unit=config.work_unit,
+                    cpoint_id=config.cpoint_id,
+                ),
+                f'{config.split}_condition_{config.condition}.json'
+            ),
         )
-        if config.infer_save_json:
-          ts_utils.write_json(
-              to_write=metrics_to_dict(
-                  temporal_metrics, num_pred_steps, timesteps_output
-              ),
-              kvstore=os.path.join(
-                  config.json_path_prefix.format(
-                      workdir=infer_workdir,
-                      base_path=config.base_path,
-                      xm_id=config.xm_id,
-                      work_unit=config.work_unit,
-                      cpoint_id=config.cpoint_id,
-                  ),
-                  f'{config.split}_condition_{config.condition}.json'
-              ),
-          )
 
     trace_writer.flush()
     video_writer.flush()

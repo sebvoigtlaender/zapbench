@@ -677,18 +677,16 @@ def train_and_evaluate(config: ml_collections.ConfigDict, workdir: str):
 
           state, metrics_update = train_jit(state, batch, dropout_rng)
 
-        with jax.spmd_mode('allow_all'):
-          train_metrics = train_metrics.merge(metrics_update)
+        train_metrics = train_metrics.merge(metrics_update)
 
       model_step += 1
       for h in hooks:
         h(model_step)
 
       if step % config.log_loss_every_steps == 0 or is_last_step:
-        with jax.spmd_mode('allow_all'):
-          scalars = make_tboard_compatible(
-              train_metrics.compute(), prefix='train'
-          )
+        scalars = make_tboard_compatible(
+            train_metrics.compute(), prefix='train'
+        )
         writer.write_scalars(step, scalars)
         train_metrics = jax.tree.map(replicate, metrics_cls.empty())
 
@@ -714,17 +712,15 @@ def train_and_evaluate(config: ml_collections.ConfigDict, workdir: str):
                 _, metrics_update = train_jit(state, batch, dropout_rng)
               else:
                 metrics_update = eval_jit(state, batch)
-              with jax.spmd_mode('allow_all'):
-                eval_metrics = eval_metrics.merge(metrics_update)
+              eval_metrics = eval_metrics.merge(metrics_update)
 
             model_step += 1
             for h in hooks:
               h(model_step)
 
-          with jax.spmd_mode('allow_all'):
-            scalars = make_tboard_compatible(
-                eval_metrics.compute(), prefix='eval'
-            )
+          scalars = make_tboard_compatible(
+              eval_metrics.compute(), prefix='eval'
+          )
           writer.write_scalars(step, scalars)
 
         free_and_delete(batch)
