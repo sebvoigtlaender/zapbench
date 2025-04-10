@@ -619,8 +619,10 @@ def train_and_evaluate(config: ml_collections.ConfigDict, workdir: str):
       batch[k].delete()
     del batch
 
-  train_jit = jax.jit(train_fn, in_shardings, out_shardings)
-  eval_jit = jax.jit(eval_fn, in_shardings_eval, out_shardings_eval)
+  train_jit = jax.jit(train_fn, in_shardings=in_shardings,
+                      out_shardings=out_shardings)
+  eval_jit = jax.jit(eval_fn, in_shardings=in_shardings_eval,
+                     out_shardings=out_shardings_eval)
 
   # Initialize summary writer.
   writer = metric_writers.create_default_writer(

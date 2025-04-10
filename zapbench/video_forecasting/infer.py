@@ -552,7 +552,8 @@ def infer(config: ml_collections.ConfigDict, infer_workdir: str):
       replicate_sharding,  # params/grad
   )
 
-  s_predict = jax.jit(pred_fn, in_shardings, out_sharding)
+  s_predict = jax.jit(pred_fn, in_shardings=in_shardings,
+                      out_shardings=out_sharding)
   logging.info('Prepared model, replicated, and start inference.')
 
   with metric_writers.ensure_flushes(writer):
