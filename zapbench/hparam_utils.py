@@ -1,4 +1,4 @@
-# Copyright 2024 The Google Research Authors.
+# Copyright 2025 The Google Research Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -91,3 +91,19 @@ def zipit(iterables):
   """
   for item in zip(*iterables):
     yield merge_dicts(*item)
+
+
+def chainit(iterables):
+  """Generates an iterator as a concatenation of iterables.
+
+  Args:
+    iterables: An arbitrary number of iterable objects.
+
+  Yields:
+    elements from the first iterable, followed by elmements from the second
+    iterable, etc
+  """
+
+  for it in iterables:
+    for item in it:
+      yield item

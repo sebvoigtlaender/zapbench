@@ -1,4 +1,4 @@
-# Copyright 2024 The Google Research Authors.
+# Copyright 2025 The Google Research Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -445,7 +445,13 @@ def train_and_evaluate(
         logging.info(last_step_message)
 
       if step == 1:
-        writer.write_hparams(dict(config))
+        # Do not save specs, as these can generate an excessive number of
+        # columns in datatable.
+        writer.write_hparams({
+            k: v
+            for k, v in config.items()
+            if k not in ('infer_spec', 'train_specs', 'val_specs')
+        })
 
       with jax.profiler.StepTraceAnnotation('train', step_num=step):
         batch = next(train_iter)
@@ -454,7 +460,8 @@ def train_and_evaluate(
             and covariates_static is not None
         ):
           batch['covariates_static'] = covariates_static.repeat(
-              jax.local_device_count(), axis=0)  # pytype: disable=unsupported-operands
+              jax.local_device_count(), axis=0
+          )  # pytype: disable=unsupported-operands
         batch = training.reshape_batch_local_devices(batch)
         train_state, metrics_update = p_train_step(
             train_state=train_state, batch=batch
@@ -473,6 +480,7 @@ def train_and_evaluate(
 
       if step % config.log_loss_every_steps == 0 or is_last_step:
         train_metrics_cpu = jax.tree.map(np.array, train_metrics.compute())
+
         writer.write_scalars(
             step, metrics_lib.make_dict_of_scalars(train_metrics_cpu)
         )
@@ -499,8 +507,7 @@ def train_and_evaluate(
 
       if is_last_step:
         platform.work_unit().set_notes(
-            last_step_message
-            + ' Final round of validation.'
+            last_step_message + ' Final round of validation.'
         )
 
       # Validation.
@@ -522,7 +529,8 @@ def train_and_evaluate(
                   and covariates_static is not None
               ):
                 batch['covariates_static'] = covariates_static.repeat(
-                    jax.local_device_count(), axis=0)  # pytype: disable=unsupported-operands
+                    jax.local_device_count(), axis=0
+                )  # pytype: disable=unsupported-operands
               batch = training.reshape_batch_local_devices(batch)
               metrics_update = flax_utils.unreplicate(
                   p_val_step(
@@ -541,6 +549,7 @@ def train_and_evaluate(
             raise ValueError(f'Val dataset {val_loader} was empty.')
 
         val_metrics_cpu = jax.tree.map(np.array, val_metrics.compute())
+
         writer.write_scalars(
             step, metrics_lib.make_dict_of_scalars(val_metrics_cpu)
         )
@@ -580,7 +589,8 @@ def train_and_evaluate(
               ),
               step=step,
               pygrain_checkpointers=('train_iter',),
-              wait_until_finished=True)
+              wait_until_finished=True,
+          )
 
       if is_last_step:
         break

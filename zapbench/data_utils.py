@@ -1,4 +1,4 @@
-# Copyright 2024 The Google Research Authors.
+# Copyright 2025 The Google Research Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
 
 """Data utilities."""
 
+import copy
 import json
-from typing import Optional
+from typing import Any, Optional, Sequence
 
 from connectomics.common import file
 import numpy as np
@@ -24,18 +25,41 @@ import tensorstore as ts
 from zapbench import constants
 
 
-def get_spec(spec_name: str) -> ts.Spec:
+def restrict_specs_to_somas(spec: dict[str, Any], soma_ids: Sequence[int] = tuple()) -> dict[str, Any]:
+  """Updates a spec to restrict it to specific soma IDs."
+
+  Args:
+    spec: Spec in dictionary form.
+    soma_ids: Ids of somas to load.
+
+  Returns:
+    Updated spec.
+  """
+  if not soma_ids:
+    return spec
+
+  spec = copy.deepcopy(spec)
+  spec['transform']['output'] = [
+    {'input_dimension': 0},
+    {'index_array': [soma_ids]}
+  ]
+  spec['transform']['input_exclusive_max'][1] = len(soma_ids)
+  return spec
+
+
+def get_spec(spec_name: str, soma_ids: Sequence[int] = tuple()) -> ts.Spec:
   """Gets TensorStore spec from SPECS.
 
   Args:
     spec_name: Key in SPECS.
+    soma_ids: Ids of somas for which data will be loaded.
 
   Returns:
     TensorStore Spec.
   """
   if spec_name not in constants.SPECS:
     raise ValueError(f'{spec_name} not in {constants.SPECS.keys()}.')
-  return ts.Spec(constants.SPECS[spec_name])
+  return ts.Spec(restrict_specs_to_somas(constants.SPECS[spec_name], soma_ids))
 
 
 def get_covariate_spec(spec_name: str) -> ts.Spec:
