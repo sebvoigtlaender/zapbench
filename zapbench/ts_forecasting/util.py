@@ -1,4 +1,4 @@
-# Copyright 2024 The Google Research Authors.
+# Copyright 2025 The Google Research Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -387,15 +387,15 @@ def get_per_step_metrics_from_directory(
   """Gets per-step results from all json-files in a directory."""
   dfs = []
   for json_file in [
-      f for f in file.Path(directory).iterdir() if str(f).endswith('.json')
+      str(f) for f in file.Path(directory).iterdir() if str(f).endswith('.json')
   ]:
-    with file.Path(f'{directory}/{json_file}').open('rt') as f:
+    with file.Path(json_file).open('rt') as f:
       loaded_json_file = json.loads(f.read())
       df = get_per_step_metrics_from_dict(
           loaded_json_file, metric=metric, include_key=include_key
       )
       if include_file:
-        df['file'] = f'{directory}/{json_file}'
+        df['file'] = json_file
       if include_condition:
         df['condition'] = constants.CONDITION_NAMES[
             get_condition_number_from_string(str(json_file))

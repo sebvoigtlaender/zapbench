@@ -1,4 +1,4 @@
-# Copyright 2024 The Google Research Authors.
+# Copyright 2025 The Google Research Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,13 +30,14 @@ def _get_specs(
     split: str,
     timeseries: str,
     covariate_series: str,
+    soma_ids: Sequence[int],
 ) -> Sequence[dict[str, Any]]:
   """Get specs."""
   specs = []
   for condition in conditions:
     specs.append({
         'timeseries': data_utils.adjust_spec_for_condition_and_split(
-            spec=data_utils.get_spec(timeseries),
+            spec=data_utils.get_spec(timeseries, soma_ids),
             condition=condition,
             split=split,
             num_timesteps_context=num_timesteps_context,
@@ -88,6 +89,7 @@ def get_config(
     val_ckpt_every_steps: int = 250,
     log_loss_every_steps: int = 100,
     seed: int | tuple[int, int] | None = -1,
+    soma_ids: str = '',
     **unused_kwargs,
 ) -> mlc.ConfigDict:
   """Default config.
@@ -110,6 +112,8 @@ def get_config(
     A `mlc.ConfigDict` instance with the common configuration options.
   """
   c = mlc.ConfigDict()
+
+  soma_ids = [int(x) for x in soma_ids.split(':') if x]
 
   # Store/parse args
   c.output_head = output_head
@@ -189,6 +193,7 @@ def get_config(
       split='train',
       timeseries=c.timeseries,
       covariate_series=c.covariate_series,
+      soma_ids=soma_ids,
   )
 
   # Validation
@@ -198,6 +203,7 @@ def get_config(
       split='val',
       timeseries=c.timeseries,
       covariate_series=c.covariate_series,
+      soma_ids=soma_ids,
   )
   c.num_val_steps = -1  # = 0 to disable, = -1 to iterate over val batches
   c.val_pad_last_batch = False
@@ -207,7 +213,7 @@ def get_config(
   c.prediction_window_length = constants.PREDICTION_WINDOW_LENGTH
   c.num_warmup_infer_steps = 0
   c.infer_spec = {
-      'timeseries': data_utils.get_spec(c.timeseries).to_json(),
+      'timeseries': data_utils.get_spec(c.timeseries, soma_ids).to_json(),
       'covariates': data_utils.get_covariate_spec(c.covariate_series).to_json(),
   }
   c.infer_sets = get_infer_sets(
@@ -221,7 +227,7 @@ def get_config(
   c.infer_with_carry = False
 
   # Series
-  c.series_spec_shape = data_utils.get_spec(c.timeseries).shape
+  c.series_spec_shape = data_utils.get_spec(c.timeseries, soma_ids).shape
   c.series_shape = (1, timesteps_input, c.series_spec_shape[1])
 
   # Covariates
