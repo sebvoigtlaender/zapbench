@@ -31,22 +31,25 @@ def _get_specs(
     timeseries: str,
     covariate_series: str,
     soma_ids: Sequence[int],
+    dataset_name: str = constants.DEFAULT_DATASET,
 ) -> Sequence[dict[str, Any]]:
-  """Get specs."""
+  """Get specs with dataset-aware context."""
   specs = []
   for condition in conditions:
     specs.append({
         'timeseries': data_utils.adjust_spec_for_condition_and_split(
-            spec=data_utils.get_spec(timeseries, soma_ids),
+            spec=data_utils.get_spec(timeseries, soma_ids, dataset_name=dataset_name),
             condition=condition,
             split=split,
             num_timesteps_context=num_timesteps_context,
+            dataset_name=dataset_name,
         ).to_json(),
         'covariates': data_utils.adjust_spec_for_condition_and_split(
-            spec=data_utils.get_covariate_spec(covariate_series),
+            spec=data_utils.get_covariate_spec(covariate_series, dataset_name=dataset_name),
             condition=condition,
             split=split,
             num_timesteps_context=num_timesteps_context,
+            dataset_name=dataset_name,
         ).to_json(),
     })
   return specs
@@ -54,15 +57,20 @@ def _get_specs(
 
 def get_infer_sets(
     num_timesteps_context: int,
+    dataset_name: str = constants.DEFAULT_DATASET,
 ) -> Sequence[dict[str, int | str]]:
-  """Get infer sets config."""
+  """Get infer sets config with dataset-aware conditions."""
+  dataset_config = constants.get_dataset_config(dataset_name)
+  conditions_train = dataset_config['conditions_train']
+  conditions_holdout = dataset_config['conditions_holdout']
+
   sets = []
-  for condition, split in [(t, 'test') for t in constants.CONDITIONS_TRAIN] + [
-      (t, 'test_holdout') for t in constants.CONDITIONS_HOLDOUT
+  for condition, split in [(t, 'test') for t in conditions_train] + [
+      (t, 'test_holdout') for t in conditions_holdout
   ]:
     inclusive_min, exclusive_max = data_utils.adjust_condition_bounds_for_split(
         split,
-        *data_utils.get_condition_bounds(condition),
+        *data_utils.get_condition_bounds(condition, dataset_name=dataset_name),
         num_timesteps_context=num_timesteps_context,
     )
     sets.append({
@@ -80,29 +88,29 @@ def get_config(
     timesteps_output: int = constants.PREDICTION_WINDOW_LENGTH,
     output_head: Optional[str] = None,
     num_classes: int = 1,
-    train_conditions: str = config_util.sequence_to_string(
-        constants.CONDITIONS_TRAIN, separator='+'
-    ),
+    train_conditions: str = None,
+    dataset_name: str = constants.DEFAULT_DATASET,
     runlocal: bool = False,
-    timeseries: str = constants.TIMESERIES_NAME,
-    covariate_series: str = constants.COVARIATE_SERIES_NAME,
+    timeseries: str = None,
+    covariate_series: str = None,
     val_ckpt_every_steps: int = 250,
     log_loss_every_steps: int = 100,
     seed: int | tuple[int, int] | None = -1,
     soma_ids: str = '',
     **unused_kwargs,
 ) -> mlc.ConfigDict:
-  """Default config.
+  """Default config with dataset-aware parameter selection.
 
   Args:
     timesteps_input: Number of input timesteps.
     timesteps_output: Number of output timesteps.
     output_head: Explicitly choose output head; automatically selected if None.
     num_classes: Number of classes for categorical output head.
-    train_conditions: Conditions used for training, as string separated by '+'.
+    train_conditions: Conditions used for training, as string separated by '+'. If None, uses dataset defaults.
+    dataset_name: Dataset to use. Defaults to constants.DEFAULT_DATASET.
     runlocal: Whether running locally or remotely.
-    timeseries: Name of the timeseries in `constants.SPECS`.
-    covariate_series: Name of the covariates in `constants.COVARIATE_SPECS`.
+    timeseries: Name of the timeseries in dataset specs. If None, uses dataset default.
+    covariate_series: Name of the covariates in dataset covariate specs. If None, uses dataset default.
     val_ckpt_every_steps: Frequency of validation/checkpointing.
     log_loss_every_steps: Frequency of logging loss.
     seed: Optional random seed. Uses a randomly generated seed if None or
@@ -112,8 +120,20 @@ def get_config(
     A `mlc.ConfigDict` instance with the common configuration options.
   """
   c = mlc.ConfigDict()
-
   soma_ids = [int(x) for x in soma_ids.split(':') if x]
+
+  dataset_config = constants.get_dataset_config(dataset_name)
+  c.dataset_name = dataset_name
+
+  # Resolve dataset-aware defaults
+  if train_conditions is None:
+    train_conditions = config_util.sequence_to_string(
+        dataset_config['conditions_train'], separator='+'
+    )
+  if timeseries is None:
+    timeseries = dataset_config['timeseries_name']
+  if covariate_series is None:
+    covariate_series = dataset_config['covariate_series_name']
 
   # Store/parse args
   c.output_head = output_head
@@ -132,7 +152,7 @@ def get_config(
   assert c.timesteps_input <= constants.MAX_CONTEXT_LENGTH
   assert c.timesteps_output <= constants.PREDICTION_WINDOW_LENGTH
   assert constants.PREDICTION_WINDOW_LENGTH % c.timesteps_output == 0
-  assert c.timeseries in constants.SPECS
+  assert c.timeseries in dataset_config['specs']
 
   # Jax config
   c.optimizer = 'adamw'
@@ -194,6 +214,7 @@ def get_config(
       timeseries=c.timeseries,
       covariate_series=c.covariate_series,
       soma_ids=soma_ids,
+      dataset_name=dataset_name,
   )
 
   # Validation
@@ -204,6 +225,7 @@ def get_config(
       timeseries=c.timeseries,
       covariate_series=c.covariate_series,
       soma_ids=soma_ids,
+      dataset_name=dataset_name,
   )
   c.num_val_steps = -1  # = 0 to disable, = -1 to iterate over val batches
   c.val_pad_last_batch = False
@@ -213,11 +235,13 @@ def get_config(
   c.prediction_window_length = constants.PREDICTION_WINDOW_LENGTH
   c.num_warmup_infer_steps = 0
   c.infer_spec = {
-      'timeseries': data_utils.get_spec(c.timeseries, soma_ids).to_json(),
-      'covariates': data_utils.get_covariate_spec(c.covariate_series).to_json(),
+      'timeseries': data_utils.get_spec(c.timeseries, soma_ids, dataset_name=dataset_name).to_json(),
+      'covariates': data_utils.get_covariate_spec(c.covariate_series, dataset_name=dataset_name).to_json(),
   }
   c.infer_sets = get_infer_sets(
-      num_timesteps_context=c.timesteps_input_infer + c.num_warmup_infer_steps)
+      num_timesteps_context=c.timesteps_input_infer + c.num_warmup_infer_steps,
+      dataset_name=dataset_name,
+  )
   c.infer_batching_str = (  # 1x...
       'expand_dims(keys=("timeseries_input","timeseries_output","covariates_input","covariates_output"),axis=0)'  # pylint: disable=line-too-long
   )
@@ -227,7 +251,7 @@ def get_config(
   c.infer_with_carry = False
 
   # Series
-  c.series_spec_shape = data_utils.get_spec(c.timeseries, soma_ids).shape
+  c.series_spec_shape = data_utils.get_spec(c.timeseries, soma_ids, dataset_name=dataset_name).shape
   c.series_shape = (1, timesteps_input, c.series_spec_shape[1])
 
   # Covariates
@@ -241,8 +265,8 @@ def get_config(
   if c.head == 'categorical':
     assert c.num_classes > 1
     c.head_num_classes = c.num_classes
-    assert c.timeseries in constants.MIN_MAX_VALUES
-    c.head_lower, c.head_upper = constants.MIN_MAX_VALUES[c.timeseries]
+    assert c.timeseries in dataset_config['min_max_values']
+    c.head_lower, c.head_upper = dataset_config['min_max_values'][c.timeseries]
 
   return c
 

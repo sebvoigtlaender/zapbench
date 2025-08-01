@@ -47,98 +47,121 @@ def restrict_specs_to_somas(spec: dict[str, Any], soma_ids: Sequence[int] = tupl
   return spec
 
 
-def get_spec(spec_name: str, soma_ids: Sequence[int] = tuple()) -> ts.Spec:
-  """Gets TensorStore spec from SPECS.
+def get_spec(spec_name: str, soma_ids: Sequence[int] = tuple(), dataset_name: str = constants.DEFAULT_DATASET) -> ts.Spec:
+  """Gets TensorStore spec from dataset-specific SPECS.
 
   Args:
-    spec_name: Key in SPECS.
+    spec_name: Key in dataset's specs.
     soma_ids: Ids of somas for which data will be loaded.
+    dataset_name: Dataset to use. If None, uses default dataset.
 
   Returns:
     TensorStore Spec.
   """
-  if spec_name not in constants.SPECS:
-    raise ValueError(f'{spec_name} not in {constants.SPECS.keys()}.')
-  return ts.Spec(restrict_specs_to_somas(constants.SPECS[spec_name], soma_ids))
+  dataset_config = constants.get_dataset_config(dataset_name)
+  if spec_name not in dataset_config['specs']:
+    raise ValueError(f'{spec_name} not in dataset {dataset_name} specs.')
+  spec_dict = dataset_config['specs'][spec_name]
+
+  return ts.Spec(restrict_specs_to_somas(spec_dict, soma_ids))
 
 
-def get_covariate_spec(spec_name: str) -> ts.Spec:
-  """Gets TensorStore spec from COVARIATE_SPECS.
+def get_covariate_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DATASET) -> ts.Spec:
+  """Gets TensorStore spec from dataset-specific COVARIATE_SPECS.
 
   Args:
-    spec_name: Key in COVARIATE_SPECS.
+    spec_name: Key in dataset's covariate specs.
+    dataset_name: Dataset to use. If None, uses default dataset.
 
   Returns:
     TensorStore Spec.
   """
-  if spec_name not in constants.COVARIATE_SPECS:
-    raise ValueError(f'{spec_name} not in {constants.COVARIATE_SPECS.keys()}.')
-  return ts.Spec(constants.COVARIATE_SPECS[spec_name])
+  dataset_config = constants.get_dataset_config(dataset_name)
+  if spec_name not in dataset_config['covariate_specs']:
+    raise ValueError(f'{spec_name} not in dataset {dataset_name} covariate specs.')
+  spec_dict = dataset_config['covariate_specs'][spec_name]
+
+  return ts.Spec(spec_dict)
 
 
-def get_position_embedding_spec(spec_name: str) -> ts.Spec:
-  """Gets TensorStore spec from POSITION_EMBEDDING_SPECS.
+def get_position_embedding_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DATASET) -> ts.Spec:
+  """Gets TensorStore spec from dataset-specific POSITION_EMBEDDING_SPECS with fallback.
 
   Args:
-    spec_name: Key in POSITION_EMBEDDING_SPECS.
+    spec_name: Key in dataset's position embedding specs.
+    dataset_name: Dataset to use. If None, uses default dataset.
 
   Returns:
     TensorStore Spec.
   """
-  if spec_name not in constants.POSITION_EMBEDDING_SPECS:
-    raise ValueError(
-        f'{spec_name} not in {constants.POSITION_EMBEDDING_SPECS.keys()}.')
-  return ts.Spec(constants.POSITION_EMBEDDING_SPECS[spec_name])
+  dataset_config = constants.get_dataset_config(dataset_name)  # Includes fallbacks
+  if spec_name not in dataset_config['position_embedding_specs']:
+    raise ValueError(f'{spec_name} not in dataset {dataset_name} position embedding specs.')
+  spec_dict = dataset_config['position_embedding_specs'][spec_name]
+
+  return ts.Spec(spec_dict)
 
 
-def get_rastermap_spec(spec_name: str) -> ts.Spec:
-  """Gets TensorStore spec from RASTERMAP_SPECS.
+def get_rastermap_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DATASET) -> ts.Spec:
+  """Gets TensorStore spec from dataset-specific RASTERMAP_SPECS with fallback.
 
   Args:
-    spec_name: Key in RASTERMAP_SPECS.
+    spec_name: Key in dataset's rastermap specs.
+    dataset_name: Dataset to use. If None, uses default dataset.
 
   Returns:
     TensorStore Spec.
   """
-  if spec_name not in constants.RASTERMAP_SPECS:
-    raise ValueError(f'{spec_name} not in {constants.RASTERMAP_SPECS.keys()}.')
-  return ts.Spec(constants.RASTERMAP_SPECS[spec_name])
+  dataset_config = constants.get_dataset_config(dataset_name)  # Includes fallbacks
+  if spec_name not in dataset_config['rastermap_specs']:
+    raise ValueError(f'{spec_name} not in dataset {dataset_name} rastermap specs.')
+  spec_dict = dataset_config['rastermap_specs'][spec_name]
+
+  return ts.Spec(spec_dict)
 
 
-def get_segmentation_dataframe(df_name: str) -> pd.DataFrame:
-  """Gets segmentation dataframe from SEGMENTATION_DATAFRAMES.
+def get_segmentation_dataframe(df_name: str, dataset_name: str = constants.DEFAULT_DATASET) -> pd.DataFrame:
+  """Gets segmentation dataframe from dataset-specific SEGMENTATION_DATAFRAMES with fallback.
 
   Can be mapped to segmentations through the label-column and to indices in
   associated trace matrices though `df.loc[trace_idx]` (or label minus 1).
 
   Args:
-    df_name: Key in SEGMENTATION_DATAFRAMES.
+    df_name: Key in dataset's segmentation dataframes.
+    dataset_name: Dataset to use. If None, uses default dataset.
 
   Returns:
     Dataframe.
   """
-  path = constants.SEGMENTATION_DATAFRAMES[df_name]
+  dataset_config = constants.get_dataset_config(dataset_name)  # Includes fallbacks
+  if df_name not in dataset_config['segmentation_dataframes']:
+    raise ValueError(f'{df_name} not in dataset {dataset_name} segmentation dataframes.')
+  path = dataset_config['segmentation_dataframes'][df_name]
   with file.Path(path).open('r') as f:
     df = pd.DataFrame(json.load(f))
   return df.sort_values('label').reset_index(drop=True)
 
 
-def get_condition_bounds(condition: int) -> tuple[int, int]:
-  """Get bounds of a condition's temporal indices while accounting for padding.
+def get_condition_bounds(condition: int, dataset_name: str = constants.DEFAULT_DATASET) -> tuple[int, int]:
+  """Get bounds of a condition's temporal indices with dataset-specific offsets.
 
   Args:
     condition: Condition number, starting from zero.
+    dataset_name: Dataset to use. If None, uses default dataset.
 
   Returns:
     (inclusive_min, exclusive_max)-tuple of boundaries.
   """
-  if condition < 0 or condition >= len(constants.CONDITION_OFFSETS) - 1:
-    raise ValueError(
-        f'condition must be in [0, {len(constants.CONDITION_OFFSETS)-1}]'
-    )
+  dataset_config = constants.get_dataset_config(dataset_name)
+  condition_offsets = dataset_config['condition_offsets']
+  condition_padding = constants.CONDITION_PADDING  # Still global (dataset-agnostic)
+
+  if condition < 0 or condition >= len(condition_offsets) - 1:
+    raise ValueError(f'condition must be in [0, {len(condition_offsets)-1}]')
+
   return (
-      constants.CONDITION_OFFSETS[condition] + constants.CONDITION_PADDING,
-      constants.CONDITION_OFFSETS[condition + 1] - constants.CONDITION_PADDING,
+      condition_offsets[condition] + condition_padding,
+      condition_offsets[condition + 1] - condition_padding,
   )
 
 
@@ -215,8 +238,9 @@ def adjust_spec_for_condition_and_split(
     condition: int,
     split: Optional[str],
     num_timesteps_context: int,
+    dataset_name: str = constants.DEFAULT_DATASET,
 ) -> ts.Spec:
-  """Adjust spec for condition and split.
+  """Adjust spec for condition and split with dataset-aware condition bounds.
 
   For example, to get the training timeseries for the first condition for an
   algorithm that uses 32 timesteps as context:
@@ -232,6 +256,7 @@ def adjust_spec_for_condition_and_split(
       held-out from training), or None (in which case the condition is not
       split).
     num_timesteps_context: Number of additional timesteps for context.
+    dataset_name: Dataset to use for condition bounds.
 
   Returns:
     TensorStore Spec.
@@ -240,21 +265,24 @@ def adjust_spec_for_condition_and_split(
     raise ValueError('Required dimension label `t` not found in spec.')
 
   inclusive_min, exclusive_max = adjust_condition_bounds_for_split(
-      split, *get_condition_bounds(condition), num_timesteps_context
+      split, *get_condition_bounds(condition, dataset_name=dataset_name), num_timesteps_context
   )
 
   return spec[ts.d['t'][slice(inclusive_min, exclusive_max)]].translate_to[0]
 
 
-def get_rastermap_indices(timeseries: str) -> np.ndarray:
-  """Gets rastermap indices."""
+def get_rastermap_indices(timeseries: str, dataset_name: str = constants.DEFAULT_DATASET) -> np.ndarray:
+  """Gets rastermap indices with dataset-aware fallback."""
+  dataset_config = constants.get_dataset_config(dataset_name)  # Includes fallbacks
+  if timeseries not in dataset_config['rastermap_sortings']:
+    raise ValueError(f'{timeseries} not in dataset {dataset_name} rastermap sortings.')
   return json.loads(
       file.Path(
-          constants.RASTERMAP_SORTINGS[timeseries],
+          dataset_config['rastermap_sortings'][timeseries],
       ).read_text('rt')
   )
 
 
-def get_indices_to_invert_rastermap_sorting(timeseries: str) -> np.ndarray:
-  """Gets indices that invert rastermap sorting."""
-  return np.argsort(get_rastermap_indices(timeseries))
+def get_indices_to_invert_rastermap_sorting(timeseries: str, dataset_name: str = constants.DEFAULT_DATASET) -> np.ndarray:
+  """Gets indices that invert rastermap sorting with dataset-aware fallback."""
+  return np.argsort(get_rastermap_indices(timeseries, dataset_name=dataset_name))

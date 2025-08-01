@@ -15,113 +15,139 @@
 """Constants for ZAPBench."""
 # pylint: disable=line-too-long
 
-# Marks the beginning of condition 0 to 8; final number is the end of timeseries
-CONDITION_OFFSETS = (0, 649, 2422, 3078, 3735, 5047, 5638, 6623, 7279, 7879)
-
-# Number of timesteps excluded at the beginning and end of each condition
+# Dataset-Agnostic Parameters (Global constants)
+VAL_FRACTION = 0.1
+TEST_FRACTION = 0.2
+MAX_CONTEXT_LENGTH = 256
+PREDICTION_WINDOW_LENGTH = 32
 CONDITION_PADDING = 1
 
-# Condition indices of training, holdout, and both conditions
-CONDITIONS_TRAIN = (0, 1, 2, 4, 5, 6, 7, 8)
-CONDITIONS_HOLDOUT = (3,)
-CONDITIONS = CONDITIONS_TRAIN + CONDITIONS_HOLDOUT
+# Backward compatibility
+DEFAULT_DATASET = '240930_traces'
 
-# Condition names
-CONDITION_NAMES = ('gain', 'dots', 'flash', 'taxis', 'turning', 'position',
-                   'open loop', 'rotation', 'dark')
-
-# Recommended fraction of timesteps per condition used as validation set
-VAL_FRACTION = 0.1
-
-# Fraction of timesteps per condition that are used as test set
-TEST_FRACTION = 0.2
-
-# Maximum number of input timesteps that any given algorithm can use
-MAX_CONTEXT_LENGTH = 256
-
-# Length of the prediction window for testing/evaluation
-PREDICTION_WINDOW_LENGTH = 32
-
-# Name of the timeseries used for the benchmark; key in `SPECS`
-TIMESERIES_NAME = '240930_traces'
-
-# Dictionary of TensorStore specs containing timeseries forecasting data
-SPECS = {
+# Dataset Registry (Dataset-Specific + Universal Parameters)
+DATASET_CONFIGS = {
     '240930_traces': {
-        'kvstore': 'gs://zapbench-release/volumes/20240930/traces/',
-        'driver': 'zarr3',
-        'transform': {
-            'input_exclusive_max': [[7879], 71721],
-            'input_inclusive_min': [0, 0],
-            'input_labels': ['t', 'f'],
-        }
-    },
-}
-
-# Minimum and maximum values for timeseries
-MIN_MAX_VALUES = {
-    '240930_traces': (-0.25, 1.5),
-}
-
-# Segmentation dataframes associated with timeseries
-SEGMENTATION_DATAFRAMES = {
-    '240930_traces': 'gs://zapbench-release/volumes/20240930/segmentation/dataframe.json',
-}
-
-# Position embeddings of neurons
-POSITION_EMBEDDING_SPECS = {
-    '240930_traces': {
-        'kvstore': 'gs://zapbench-release/volumes/20240930/position_embedding/',
-        'driver': 'zarr',
-        'rank': 2,
-        'metadata': {'shape': [71721, 192]},
-        'transform': {
-            'input_inclusive_min': [0, 0],
-            'input_exclusive_max': [[71721], [192]],
-            'input_labels': ['f', 'a'],
+        # Dataset-Specific Parameters (MUST change)
+        'condition_offsets': (
+            0,
+            649,
+            2422,
+            3078,
+            3735,
+            5047,
+            5638,
+            6623,
+            7279,
+            7879,
+        ),
+        'condition_names': (
+            'gain',
+            'dots',
+            'flash',
+            'taxis',
+            'turning',
+            'position',
+            'open loop',
+            'rotation',
+            'dark',
+        ),
+        'conditions_train': (0, 1, 2, 4, 5, 6, 7, 8),
+        'conditions_holdout': (3,),
+        'timeseries_name': '240930_traces',
+        'covariate_series_name': '240930_stimuli_features',
+        'specs': {
+            '240930_traces': {
+                'kvstore': 'gs://zapbench-release/volumes/20240930/traces/',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[7879], 71721],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
-    }
-}
-
-# Name of covariate series used for the benchmark; key in `COVARIATE_SPECS`
-COVARIATE_SERIES_NAME = '240930_stimuli_features'
-
-# Covariates computed using stimulus information
-COVARIATE_SPECS = {
-    '240930_stimuli_features': {
-        'kvstore': 'gs://zapbench-release/volumes/20240930/stimuli_features/',
-        'driver': 'zarr',
-        'rank': 2,
-        'metadata': {'shape': [7879, 26]},
-        'transform': {
-            'input_inclusive_min': [0, 0],
-            'input_exclusive_max': [[7879], [26]],
-            'input_labels': ['t', 'f'],
+        'covariate_specs': {
+            '240930_stimuli_features': {
+                'kvstore': (
+                    'gs://zapbench-release/volumes/20240930/stimuli_features/'
+                ),
+                'driver': 'zarr',
+                'rank': 2,
+                'metadata': {'shape': [7879, 26]},
+                'transform': {
+                    'input_inclusive_min': [0, 0],
+                    'input_exclusive_max': [[7879], [26]],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+            '240930_stimulus_evoked_response': {
+                'kvstore': 'gs://zapbench-release/volumes/20240930/stimulus_evoked_response/',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[7879], 71721],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+        },
+        'min_max_values': {
+            '240930_traces': (-0.25, 1.5),
+        },
+        # Universal Parameters (MAY change) - present for this dataset
+        'position_embedding_specs': {
+            '240930_traces': {
+                'kvstore': (
+                    'gs://zapbench-release/volumes/20240930/position_embedding/'
+                ),
+                'driver': 'zarr',
+                'rank': 2,
+                'metadata': {'shape': [71721, 192]},
+                'transform': {
+                    'input_inclusive_min': [0, 0],
+                    'input_exclusive_max': [[71721], [192]],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
+        'segmentation_dataframes': {
+            '240930_traces': 'gs://zapbench-release/volumes/20240930/segmentation/dataframe.json',
+        },
+        'rastermap_specs': {
+            '240930_traces': {
+                'kvstore': 'gs://zapbench-release/volumes/20240930/traces_rastermap_sorted/s0/',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[7879], 71721],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            }
+        },
+        'rastermap_sortings': {
+            '240930_traces': 'gs://zapbench-release/volumes/20240930/traces_rastermap_sorted/sorting.json',
         },
     },
-    '240930_stimulus_evoked_response': {
-        'kvstore': 'gs://zapbench-release/volumes/20240930/stimulus_evoked_response/',
-        'driver': 'zarr3',
-        'transform': {
-            'input_exclusive_max': [[7879], 71721],
-            'input_inclusive_min': [0, 0],
-            'input_labels': ['t', 'f'],
-        }
-    },
 }
 
-# Rastermap sortings of timeseries as JSON files and associated specs
-RASTERMAP_SORTINGS = {
-    '240930_traces': 'gs://zapbench-release/volumes/20240930/traces_rastermap_sorted/sorting.json',
-}
-RASTERMAP_SPECS = {
-    '240930_traces': {
-        'kvstore': 'gs://zapbench-release/volumes/20240930/traces_rastermap_sorted/s0/',
-        'driver': 'zarr3',
-        'transform': {
-            'input_exclusive_max': [[7879], 71721],
-            'input_inclusive_min': [0, 0],
-            'input_labels': ['t', 'f'],
-        }
-    }
-}
+
+def get_dataset_config(dataset_name: str = DEFAULT_DATASET) -> dict:
+  """Get dataset configuration with fallbacks for default dataset."""
+  if dataset_name not in DATASET_CONFIGS:
+    raise ValueError(f"Dataset '{dataset_name}' not found in DATASET_CONFIGS")
+
+  config = DATASET_CONFIGS[dataset_name].copy()
+  default_config = DATASET_CONFIGS[DEFAULT_DATASET]
+
+  # Apply fallbacks for Universal Parameters (MAY change)
+  universal_params = [
+      'position_embedding_specs',
+      'segmentation_dataframes',
+      'rastermap_specs',
+      'rastermap_sortings',
+  ]
+  for param in universal_params:
+    if param not in config:
+      config[param] = default_config[param]
+
+  return config

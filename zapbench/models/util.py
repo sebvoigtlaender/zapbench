@@ -16,22 +16,22 @@
 
 from typing import Any, Type
 
-from connectomics.jax.models import util
-# pylint:disable=unused-import, g-importing-member
-from connectomics.jax.models.util import get_config_name
-from connectomics.jax.models.util import load_config
-from connectomics.jax.models.util import save_config
-# pylint:enable=unused-import, g-importing-member
-
 import flax.linen as nn
 import ml_collections
+from connectomics.jax.models import util
+# pylint:disable=unused-import, g-importing-member
+from connectomics.jax.models.util import (
+    get_config_name,
+    load_config,
+    save_config,
+)
 
 # pylint:disable=unused-import
-from zapbench.models import naive
-from zapbench.models import nlinear
-from zapbench.models import nunet
-from zapbench.models import tide
-from zapbench.models import tsmixer
+from zapbench.models import naive, nlinear, nunet, tide, tsmixer
+
+# pylint:enable=unused-import, g-importing-member
+
+
 # pylint:enable=unused-import
 
 DEFAULT_PKG = 'zapbench.models'
