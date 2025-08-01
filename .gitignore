@@ -23,3 +23,14 @@ poetry.lock
 
 # PyCharm
 .idea
+
+# VS Code
+.vscode/
+
+# Claude-related files
+CLAUDE.md
+**/CLAUDE.md
+claude_context/
+
+# Jupyter notebooks
+*.ipynb
