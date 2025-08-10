@@ -25,10 +25,9 @@ CONDITION_PADDING = 1
 # Backward compatibility
 DEFAULT_DATASET = '240930_traces'
 
-# Dataset Registry (Dataset-Specific + Universal Parameters)
+# Dataset registry
 DATASET_CONFIGS = {
     '240930_traces': {
-        # Dataset-Specific Parameters (MUST change)
         'condition_offsets': (
             0,
             649,
@@ -40,6 +39,17 @@ DATASET_CONFIGS = {
             6623,
             7279,
             7879,
+        ),
+        'condition_intervals': (
+            ((0, 649),),
+            ((649, 2422),),
+            ((2422, 3078),),
+            ((3078, 3735),),
+            ((3735, 5047),),
+            ((5047, 5638),),
+            ((5638, 6623),),
+            ((6623, 7279),),
+            ((7279, 7879),),
         ),
         'condition_names': (
             'gain',
@@ -94,7 +104,6 @@ DATASET_CONFIGS = {
         'min_max_values': {
             '240930_traces': (-0.25, 1.5),
         },
-        # Universal Parameters (MAY change) - present for this dataset
         'position_embedding_specs': {
             '240930_traces': {
                 'kvstore': (

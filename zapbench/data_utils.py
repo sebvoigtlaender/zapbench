@@ -16,6 +16,7 @@
 
 import copy
 import json
+import logging
 from typing import Any, Optional, Sequence
 
 from connectomics.common import file
@@ -23,6 +24,8 @@ import numpy as np
 import pandas as pd
 import tensorstore as ts
 from zapbench import constants
+
+logger = logging.getLogger(__name__)
 
 
 def restrict_specs_to_somas(spec: dict[str, Any], soma_ids: Sequence[int] = tuple()) -> dict[str, Any]:
@@ -233,6 +236,53 @@ def get_num_windows(
   )
 
 
+def get_condition_intervals(condition: int, dataset_name: str = constants.DEFAULT_DATASET) -> tuple[tuple[int, int], ...]:
+  """Get padded intervals for a condition."""
+  dataset_config = constants.get_dataset_config(dataset_name)
+  intervals = dataset_config['condition_intervals'][condition]
+
+  padded_intervals = []
+  for start, end in intervals:
+    padded_start = start + constants.CONDITION_PADDING
+    padded_end = end - constants.CONDITION_PADDING
+    if not (padded_start < padded_end):
+      logger.warning(f"Padded interval [{padded_start}, {padded_end}) is not valid")
+      continue
+    padded_intervals.append((padded_start, padded_end))
+
+  return tuple(padded_intervals)
+
+
+def calculate_window_size(num_timesteps_context: int) -> int:
+  """Calculate window size with safety checks."""
+  if num_timesteps_context <= 0:
+    raise ValueError(f"num_timesteps_context must be > 0, got {num_timesteps_context}")
+
+  if num_timesteps_context > constants.MAX_CONTEXT_LENGTH:
+    raise ValueError(f"num_timesteps_context {num_timesteps_context} exceeds MAX_CONTEXT_LENGTH {constants.MAX_CONTEXT_LENGTH}")
+
+  window_size = num_timesteps_context + constants.PREDICTION_WINDOW_LENGTH
+  return window_size
+
+
+def build_valid_timesteps(intervals: tuple[tuple[int, int], ...], window_size: int) -> list[int]:
+  """Build timesteps that can start complete windows within intervals."""
+  valid_timesteps = []
+
+  for start, end in intervals:
+    interval_size = end - start
+
+    if interval_size >= window_size:
+      valid_timesteps.extend(range(start, end - window_size + 1))
+    else:
+      logger.warning(f"Interval [{start}, {end}) too small for window_size {window_size}")
+
+  if not valid_timesteps:
+    raise ValueError(f"No intervals large enough for window_size={window_size}.")
+
+  return sorted(valid_timesteps)
+
+
 def adjust_spec_for_condition_and_split(
     spec: ts.Spec,
     condition: int,
@@ -240,7 +290,7 @@ def adjust_spec_for_condition_and_split(
     num_timesteps_context: int,
     dataset_name: str = constants.DEFAULT_DATASET,
 ) -> ts.Spec:
-  """Adjust spec for condition and split with dataset-aware condition bounds.
+  """Adjust spec for multi-interval conditions with gap-aware windowing.
 
   For example, to get the training timeseries for the first condition for an
   algorithm that uses 32 timesteps as context:
@@ -264,11 +314,34 @@ def adjust_spec_for_condition_and_split(
   if 't' not in spec.domain.labels:
     raise ValueError('Required dimension label `t` not found in spec.')
 
-  inclusive_min, exclusive_max = adjust_condition_bounds_for_split(
-      split, *get_condition_bounds(condition, dataset_name=dataset_name), num_timesteps_context
-  )
+  intervals = get_condition_intervals(condition, dataset_name)
+  window_size = calculate_window_size(num_timesteps_context)
+  valid_timesteps = build_valid_timesteps(intervals, window_size)
 
-  return spec[ts.d['t'][slice(inclusive_min, exclusive_max)]].translate_to[0]
+  if split:
+    total = len(valid_timesteps)
+    test_count = int(total * constants.TEST_FRACTION)
+    val_count = int(total * constants.VAL_FRACTION)
+    train_count = total - test_count - val_count
+
+    if split == 'train':
+      valid_timesteps = valid_timesteps[:train_count]
+    elif split == 'val':
+      val_start = max(0, train_count - num_timesteps_context)
+      valid_timesteps = valid_timesteps[val_start:train_count + val_count]
+    elif split == 'test':
+      test_start = max(0, train_count + val_count - num_timesteps_context)
+      valid_timesteps = valid_timesteps[test_start:]
+    elif split == 'test_holdout':
+      holdout_start = max(0, total - constants.MAX_CONTEXT_LENGTH - constants.PREDICTION_WINDOW_LENGTH)
+      valid_timesteps = valid_timesteps[holdout_start:]
+
+  # Use non-slice indexing for non-contiguous case
+  is_contiguous = len(valid_timesteps) == (valid_timesteps[-1] - valid_timesteps[0] + 1)
+  if is_contiguous:
+    return spec[ts.d['t'][slice(valid_timesteps[0], valid_timesteps[-1] + 1)]].translate_to[0]
+  else:
+    return spec[ts.d['t'][valid_timesteps]].translate_to[0]
 
 
 def get_rastermap_indices(timeseries: str, dataset_name: str = constants.DEFAULT_DATASET) -> np.ndarray:
