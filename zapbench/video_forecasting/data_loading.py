@@ -96,23 +96,28 @@ def get_timesteps_for_split(
   timesteps = []
   boundaries = []
   train_splits = ['train', 'train_val']
+  # Get dataset config for condition checks
+  dataset_config = constants.get_dataset_config()
+  conditions_train = dataset_config['conditions_train']
+  conditions_holdout = dataset_config['conditions_holdout']
+  conditions_all = conditions_train + conditions_holdout
   # Iterate through conditions and extend timesteps based on split.
   for condition in config.conditions:
-    if condition in constants.CONDITIONS_TRAIN and split != 'test_holdout':
+    if condition in conditions_train and split != 'test_holdout':
       # in Fish 2.0 train/val/test conditions
       t_start, t_end = data_utils.adjust_condition_bounds_for_split(
           split,
           *data_utils.get_condition_bounds(condition),
           config.timesteps_input,
       )
-    elif condition in constants.CONDITIONS_HOLDOUT and split == 'test_holdout':
+    elif condition in conditions_holdout and split == 'test_holdout':
       # in Fish 2.0 holdout conditions
       t_start, t_end = data_utils.adjust_condition_bounds_for_split(
           split,
           *data_utils.get_condition_bounds(condition),
           config.timesteps_input,
       )
-    elif condition not in constants.CONDITIONS and split in train_splits:
+    elif condition not in conditions_all and split in train_splits:
       # pretraining conditions are only used for training, use config offsets
       t_start = condition_offsets[condition] + constants.CONDITION_PADDING
       t_end = condition_offsets[condition + 1] - constants.CONDITION_PADDING

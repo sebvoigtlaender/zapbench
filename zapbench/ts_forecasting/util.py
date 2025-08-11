@@ -383,9 +383,14 @@ def get_per_step_metrics_from_directory(
     include_condition: bool = True,
     include_file: bool = True,
     include_key: bool = True,
+    dataset_name: str = constants.DEFAULT_DATASET,
 ) -> pd.DataFrame:
-  """Gets per-step results from all json-files in a directory."""
+  """Gets per-step results with dataset-aware condition names."""
   dfs = []
+
+  dataset_config = constants.get_dataset_config(dataset_name)
+  condition_names = dataset_config['condition_names']
+
   for json_file in [
       str(f) for f in file.Path(directory).iterdir() if str(f).endswith('.json')
   ]:
@@ -397,8 +402,10 @@ def get_per_step_metrics_from_directory(
       if include_file:
         df['file'] = json_file
       if include_condition:
-        df['condition'] = constants.CONDITION_NAMES[
-            get_condition_number_from_string(str(json_file))
-        ]
+        condition_num = get_condition_number_from_string(str(json_file))
+        if 0 <= condition_num < len(condition_names):
+          df['condition'] = condition_names[condition_num]
+        else:
+          df['condition'] = f'condition_{condition_num}'  # Fallback
       dfs.append(df)
   return pd.concat(dfs)

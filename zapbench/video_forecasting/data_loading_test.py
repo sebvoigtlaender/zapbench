@@ -18,6 +18,7 @@ from absl.testing import absltest
 from connectomics.jax.inputs import tensorloader as tl
 import jax
 import numpy as np
+from unittest import mock
 from zapbench import constants
 from zapbench.video_forecasting import config
 from zapbench.video_forecasting import data_loading as dl
@@ -33,16 +34,27 @@ class DataLoadingTest(absltest.TestCase):
     c.data_config.x_crop_size = None
     c.data_config.y_crop_size = None
     c.data_config.z_crop_size = None
-    # simulate small setup with held out and pretraining splits
-    constants.CONDITION_OFFSETS = (0, 52, 104, 156)
-    constants.CONDITIONS_TRAIN = (0,)
-    constants.CONDITIONS_HOLDOUT = (1,)
-    constants.CONDITIONS = (0, 1)
+    
+    # Create test dataset config
+    self.test_dataset_config = constants.get_dataset_config().copy()
+    self.test_dataset_config['condition_offsets'] = (0, 52, 104, 156)
+    self.test_dataset_config['conditions_train'] = (0,)
+    self.test_dataset_config['conditions_holdout'] = (1,)
+    
+    # Update global constants that are still used
     constants.MAX_CONTEXT_LENGTH = c.data_config.timesteps_input
     constants.PREDICTION_WINDOW_LENGTH = 2
-    c.data_config.condition_offsets = constants.CONDITION_OFFSETS
-    # by default use only train conditions
-    c.data_config.conditions = constants.CONDITIONS_TRAIN
+    
+    # Update config to use test values
+    c.data_config.condition_offsets = self.test_dataset_config['condition_offsets']
+    c.data_config.conditions = self.test_dataset_config['conditions_train']  # default to train
+    
+    # Start the patch to make get_dataset_config return our test config
+    self.dataset_config_patcher = mock.patch(
+        'zapbench.constants.get_dataset_config',
+        return_value=self.test_dataset_config
+    )
+    self.dataset_config_patcher.start()
     c.num_epochs = 1
     c.global_batch_size = 3
     rng = np.random.default_rng(seed=0)
@@ -80,6 +92,11 @@ class DataLoadingTest(absltest.TestCase):
         'dtype': 'float32',
         'array': rng.uniform(0, 1, (16, 12, 4, 156)).tolist(),
     }
+
+  def tearDown(self):
+    # Stop the patch
+    self.dataset_config_patcher.stop()
+    super().tearDown()
 
   def test_data_source_split(self):
     data_source = dl.VideoTensorSource(*self.args, split='train')

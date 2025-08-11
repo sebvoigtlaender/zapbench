@@ -25,22 +25,22 @@ from zapbench import data_utils
 class DataTest(parameterized.TestCase):
 
   def test_get_spec(self):
-    for spec_name in constants.SPECS:
+    for spec_name in constants.get_dataset_config()['specs'].keys():
       spec = data_utils.get_spec(spec_name)
       self.assertIsInstance(spec, ts.Spec)
 
   def test_get_covariate_spec(self):
-    for spec_name in constants.COVARIATE_SPECS:
+    for spec_name in constants.get_dataset_config()['covariate_specs'].keys():
       spec = data_utils.get_covariate_spec(spec_name)
       self.assertIsInstance(spec, ts.Spec)
 
   def test_get_position_embedding_spec(self):
-    for spec_name in constants.POSITION_EMBEDDING_SPECS:
+    for spec_name in constants.get_dataset_config()['position_embedding_specs'].keys():
       spec = data_utils.get_position_embedding_spec(spec_name)
       self.assertIsInstance(spec, ts.Spec)
 
   def test_get_rastermap_spec(self):
-    for spec_name in constants.RASTERMAP_SPECS:
+    for spec_name in constants.get_dataset_config()['rastermap_specs'].keys():
       spec = data_utils.get_rastermap_spec(spec_name)
       self.assertIsInstance(spec, ts.Spec)
 
@@ -90,7 +90,7 @@ class DataTest(parameterized.TestCase):
 
   @parameterized.parameters('train', 'val', 'test', 'test_holdout')
   def test_adjust_spec_for_condition_and_split(self, split):
-    for spec_name in constants.SPECS:
+    for spec_name in constants.get_dataset_config()['specs'].keys():
       spec = data_utils.adjust_spec_for_condition_and_split(
           data_utils.get_spec(spec_name), 1, split, 12
       )

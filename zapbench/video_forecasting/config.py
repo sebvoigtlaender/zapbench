@@ -130,8 +130,9 @@ def get_video_prediction_config() -> ml_collections.ConfigDict:
   c.nlinear_config.normalization = True
   c.nlinear_config.constant_init = True
 
-  c.data_config.condition_offsets = constants.CONDITION_OFFSETS
-  c.data_config.conditions = constants.CONDITIONS
+  dataset_config = constants.get_dataset_config()
+  c.data_config.condition_offsets = dataset_config['condition_offsets']
+  c.data_config.conditions = dataset_config['conditions_train'] + dataset_config['conditions_holdout']
 
   # meshing and sharding settings
   # should be ordered by ease to distribute (batch -> spatial -> ..)
