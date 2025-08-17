@@ -97,7 +97,7 @@ def get_position_embedding_spec(spec_name: str, dataset_name: str = constants.DE
   Returns:
     TensorStore Spec.
   """
-  dataset_config = constants.get_dataset_config(dataset_name)  # Includes fallbacks
+  dataset_config = constants.get_dataset_config(dataset_name)
   if spec_name not in dataset_config['position_embedding_specs']:
     raise ValueError(f'{spec_name} not in dataset {dataset_name} position embedding specs.')
   spec_dict = dataset_config['position_embedding_specs'][spec_name]
@@ -115,7 +115,7 @@ def get_rastermap_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DAT
   Returns:
     TensorStore Spec.
   """
-  dataset_config = constants.get_dataset_config(dataset_name)  # Includes fallbacks
+  dataset_config = constants.get_dataset_config(dataset_name)
   if spec_name not in dataset_config['rastermap_specs']:
     raise ValueError(f'{spec_name} not in dataset {dataset_name} rastermap specs.')
   spec_dict = dataset_config['rastermap_specs'][spec_name]
@@ -136,7 +136,7 @@ def get_segmentation_dataframe(df_name: str, dataset_name: str = constants.DEFAU
   Returns:
     Dataframe.
   """
-  dataset_config = constants.get_dataset_config(dataset_name)  # Includes fallbacks
+  dataset_config = constants.get_dataset_config(dataset_name)
   if df_name not in dataset_config['segmentation_dataframes']:
     raise ValueError(f'{df_name} not in dataset {dataset_name} segmentation dataframes.')
   path = dataset_config['segmentation_dataframes'][df_name]
@@ -346,7 +346,7 @@ def adjust_spec_for_condition_and_split(
 
 def get_rastermap_indices(timeseries: str, dataset_name: str = constants.DEFAULT_DATASET) -> np.ndarray:
   """Gets rastermap indices with dataset-aware fallback."""
-  dataset_config = constants.get_dataset_config(dataset_name)  # Includes fallbacks
+  dataset_config = constants.get_dataset_config(dataset_name)
   if timeseries not in dataset_config['rastermap_sortings']:
     raise ValueError(f'{timeseries} not in dataset {dataset_name} rastermap sortings.')
   return json.loads(

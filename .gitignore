@@ -31,6 +31,3 @@ poetry.lock
 CLAUDE.md
 **/CLAUDE.md
 claude_context/
-
-# Jupyter notebooks
-*.ipynb
