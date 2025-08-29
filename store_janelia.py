@@ -87,7 +87,7 @@ def get_condition_cfg(data_struct: Dict[str, Any]) -> Tuple[Tuple[int, ...], Tup
         x = fill_gaps(stim_full_harmonized, 100)
         x = fill_start(x)
         x = x.astype(int)
-        condition_ix_list = np.unique(x[x != 0]).tolist()
+        condition_ix_list = np.unique(x)
         condition_intervals = get_condition_intervals(x, condition_ix_list)
 
     else:
@@ -274,14 +274,16 @@ def process_janelia_subject(subject_id: int) -> Dict[str, Any]:
     else:
         raise ValueError(f"Behavior_full not found for subject {subject_id:02d}")
 
-    conditions_train, condition_intervals = get_condition_cfg(data_struct)
-    condition_names = tuple(CONDITION_NAMES[i] for i in conditions_train)
+    conditions, condition_intervals = get_condition_cfg(data_struct)
+    condition_names = tuple(CONDITION_NAMES[i] for i in conditions)
 
-    if len(conditions_train) == 1:
+    if len(conditions) == 1:
+        conditions_train = conditions
         conditions_holdout = ()
     else:
-        conditions_holdout = (conditions_train[-1],)
-        conditions_train = conditions_train[:-1]
+        conditions_train = conditions[:-1]
+        conditions_holdout = (conditions[-1],)
+
 
 
     spec = get_janelia_spec(
