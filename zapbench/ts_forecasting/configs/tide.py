@@ -14,18 +14,17 @@
 
 """Tide models."""
 
-from collections import abc
 import dataclasses
+from collections import abc
 
-from connectomics.jax import config_util
 import immutabledict
 import ml_collections as mlc
-from zapbench import constants
-from zapbench import data_utils
+from connectomics.jax import config_util
+
+from zapbench import constants, data_utils
 from zapbench import hparam_utils as hyper
 from zapbench.models import tide
 from zapbench.ts_forecasting.configs import common
-
 
 _ARGS = immutabledict.immutabledict({
     'ablate_future_covariates': False,
@@ -34,6 +33,7 @@ _ARGS = immutabledict.immutabledict({
     'ablate_static_covariates': True,
     'seed': -1,
     'timesteps_input': 4,
+    'dataset_name': 'subject_17',
 })
 
 _EXPERIMENTS = {

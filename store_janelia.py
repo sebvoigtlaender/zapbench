@@ -1,15 +1,15 @@
-import numpy as np
+import os
+from typing import Any, Dict, List, Tuple
+
 import h5py
+import numpy as np
 import scipy.io
 import tensorstore as ts
-from typing import Tuple, Dict, List, Any
-import os
 
+PATH_JANELIA = "/Users/s/vault/neural_data/janelia"
+PATH_STORE = "/Users/s/vault/neural_data/janelia/ts_files"
 
-PATH_JANELIA = "/Users/sebastianvoigtlaender/vault/neural_data/janelia"
-PATH_STORE = "/Users/sebastianvoigtlaender/vault/neural_data/janelia/ts_files"
-
-SUBJECT_ID_LIST = [1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17]
+SUBJECT_ID_LIST = [5, 6, 14, 17]
 N_STIMULUS_ENCODINGS = 16
 CONDITION_NAMES = ['spontaneous', 'taxis', 'dark-taxis', 'dark', 'opt_response', 'looming']
 CONDITION_MAP = {
@@ -117,7 +117,7 @@ def save_tensorstore(x: np.ndarray, subject_id: str, data_type: str) -> None:
 
 
 def write_spec_to_constants_file(subject_key: str, spec: Dict[str, Any]) -> None:
-    constants_file = "/Users/sebastianvoigtlaender/git/zapbench/constants.txt"
+    constants_file = "/Users/s/git/zapbench/constants.txt"
 
     spec_lines = []
     spec_lines.append(f"    '{subject_key}': {{")
@@ -308,6 +308,7 @@ def main():
             subject_key = f'subject_{subject_id:02d}'
             write_spec_to_constants_file(subject_key, spec)
         except Exception as e:
+            print(e)
             continue
 
 

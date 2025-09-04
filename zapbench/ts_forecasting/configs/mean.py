@@ -14,21 +14,22 @@
 
 """Mean baseline."""
 
-from collections import abc
 import dataclasses
+from collections import abc
 
-from connectomics.jax import config_util
 import immutabledict
 import ml_collections as mlc
+from connectomics.jax import config_util
+
 from zapbench import constants
 from zapbench import hparam_utils as hyper
 from zapbench.models import naive
 from zapbench.ts_forecasting.configs import common
 
-
 _ARGS = immutabledict.immutabledict({
     'seed': -1,  # Model is parameter-free and deterministic.
     'timesteps_input': 4,  # Window to average over.
+    'dataset_name': 'subject_14',
 })
 
 
@@ -63,8 +64,11 @@ def get_config(arg: str | None = None) -> mlc.ConfigDict:
   config.num_train_steps = 1
 
   config.model_class = 'naive.MeanBaseline'
-  config.mean_baseline_config = mlc.ConfigDict(dataclasses.asdict(
-      naive.MeanBaselineConfig(pred_len=constants.PREDICTION_WINDOW_LENGTH)))
+  config.mean_baseline_config = mlc.ConfigDict(
+      dataclasses.asdict(
+          naive.MeanBaselineConfig(pred_len=constants.PREDICTION_WINDOW_LENGTH)
+      )
+  )
 
   return config
 

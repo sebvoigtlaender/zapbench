@@ -31,9 +31,7 @@ python main_train.py \
 
 ```bash
 # See configs/infer.py for additional options.
-python main_infer.py:exp_workdir=/dir/for/training \
-  --config configs/infer.py \
-  --workdir /dir/for/inference
+python main_infer.py --config configs/infer.py:exp_workdir=/dir/for/training --workdir /dir/for/training
 ```
 
 Metric are written to a subdirectory within `/dir/for/inference` as json files,

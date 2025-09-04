@@ -32,7 +32,8 @@ _ARGS = immutabledict.immutabledict({
     'n_block': 5,
     'seed': -1,
     'timesteps_input': 4,
-    'soma_ids': ''
+    'soma_ids': '',
+    'dataset_name': 'subject_17',
 })
 
 _EXPERIMENTS = {

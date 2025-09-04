@@ -16,13 +16,11 @@
 
 from typing import Sequence
 
-from absl import app
-from absl import flags
-from absl import logging
 import jax
+from absl import app, flags, logging
 from ml_collections import config_flags
 
-from zapbench.ts_forecasting import infer
+from zapbench.ts_forecasting import infer, infer_idx
 
 FLAGS = flags.FLAGS
 
@@ -48,7 +46,7 @@ def main(argv: Sequence[str]) -> None:
   logging.info('JAX process: %d / %d', jax.process_index(), jax.process_count())
   logging.info('JAX devices: %r', jax.devices())
 
-  infer.inference(FLAGS.config, _WORKDIR.value)
+  infer_idx.inference(FLAGS.config, _WORKDIR.value)
 
 
 if __name__ == '__main__':

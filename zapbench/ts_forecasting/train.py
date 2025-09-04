@@ -14,23 +14,14 @@
 
 """Methods for training."""
 
-from collections.abc import Mapping, Sequence
 import contextlib
 import functools
 import itertools as it
 import os
+from collections.abc import Mapping, Sequence
 from typing import Any
 
-from absl import logging
-from clu import metric_writers
-from clu import metrics as clu_metrics
-from clu import parameter_overview
-from clu import periodic_actions
-from clu import platform  # pylint: disable=unused-import
-from connectomics.jax import checkpoint
-from connectomics.jax import training
 import connectomics.jax.metrics as metrics_lib
-from etils import epath
 import flax
 import flax.jax_utils as flax_utils
 import flax.linen as nn
@@ -39,10 +30,19 @@ import jax.numpy as jnp
 import ml_collections
 import numpy as np
 import optax
+from absl import logging
+from clu import (
+  metric_writers,
+  parameter_overview,
+  periodic_actions,
+  platform,  # pylint: disable=unused-import
+)
+from clu import metrics as clu_metrics
+from connectomics.jax import checkpoint, training
+from etils import epath
+
 import zapbench.models.util as model_util
-from zapbench.ts_forecasting import heads
-from zapbench.ts_forecasting import input_pipeline
-from zapbench.ts_forecasting import util
+from zapbench.ts_forecasting import heads, input_pipeline, util
 
 
 @flax.struct.dataclass

@@ -14,14 +14,14 @@
 
 """Common configuration."""
 
-from collections import abc
 import random
+from collections import abc
 from typing import Any, Optional, Sequence
 
-from connectomics.jax import config_util
 import ml_collections as mlc
-from zapbench import constants
-from zapbench import data_utils
+from connectomics.jax import config_util
+
+from zapbench import constants, data_utils
 
 
 def _get_specs(
@@ -31,21 +31,25 @@ def _get_specs(
     timeseries: str,
     covariate_series: str,
     soma_ids: Sequence[int],
-    dataset_name: str = constants.DEFAULT_DATASET,
+    dataset_name: str,
 ) -> Sequence[dict[str, Any]]:
   """Get specs with dataset-aware context."""
   specs = []
   for condition in conditions:
     specs.append({
         'timeseries': data_utils.adjust_spec_for_condition_and_split(
-            spec=data_utils.get_spec(timeseries, soma_ids, dataset_name=dataset_name),
+            spec=data_utils.get_spec(
+                timeseries, soma_ids, dataset_name=dataset_name
+            ),
             condition=condition,
             split=split,
             num_timesteps_context=num_timesteps_context,
             dataset_name=dataset_name,
         ).to_json(),
         'covariates': data_utils.adjust_spec_for_condition_and_split(
-            spec=data_utils.get_covariate_spec(covariate_series, dataset_name=dataset_name),
+            spec=data_utils.get_covariate_spec(
+                covariate_series, dataset_name=dataset_name
+            ),
             condition=condition,
             split=split,
             num_timesteps_context=num_timesteps_context,
@@ -83,13 +87,61 @@ def get_infer_sets(
   return sets
 
 
+# TEMPORARY FIX TO MAKE TRAINING WORK; PRODUCE WRONG INFERENCE RESULTS
+# def get_infer_sets(
+#     num_timesteps_context: int,
+#     dataset_name: str,
+# ) -> Sequence[dict[str, int | str]]:
+#   """Get infer sets config with dataset-aware conditions."""
+#   dataset_config = constants.get_dataset_config(dataset_name)
+#   conditions_train = dataset_config['conditions_train']
+#   conditions_holdout = dataset_config['conditions_holdout']
+
+#   sets = []
+#   for condition, split in [(t, 'test') for t in conditions_train] + [
+#       (t, 'test_holdout') for t in conditions_holdout
+#   ]:
+#     inclusive_min, exclusive_max = 0, 100
+#     sets.append({
+#         'name': f'{split}_condition_{condition}',
+#         'start_idx': inclusive_min,
+#         'num_windows': data_utils.get_num_windows(
+#             inclusive_min, exclusive_max, num_timesteps_context
+#         ),
+#     })
+#   return sets
+
+
+def get_infer_idx_sets(
+    num_timesteps_context: int,
+    dataset_name: str,
+) -> Sequence[dict[str, int | str]]:
+  dataset_config = constants.get_dataset_config(dataset_name)
+  conditions_train = dataset_config['conditions_train']
+  conditions_holdout = dataset_config['conditions_holdout']
+
+  sets = []
+  for condition, split in [(t, 'test') for t in conditions_train] + [
+      (t, 'test_holdout') for t in conditions_holdout
+  ]:
+    valid_timesteps = data_utils.get_condition_idx_for_split(
+        condition, num_timesteps_context, split, dataset_name
+    )
+    sets.append({
+        'name': f'{split}_condition_{condition}',
+        'idx_list': valid_timesteps,
+        'num_windows': len(valid_timesteps),
+    })
+  return sets
+
+
 def get_config(
     timesteps_input: int = constants.MAX_CONTEXT_LENGTH,
     timesteps_output: int = constants.PREDICTION_WINDOW_LENGTH,
     output_head: Optional[str] = None,
     num_classes: int = 1,
     train_conditions: str = None,
-    dataset_name: str = constants.DEFAULT_DATASET,
+    dataset_name: str = None,
     runlocal: bool = False,
     timeseries: str = None,
     covariate_series: str = None,
@@ -107,7 +159,7 @@ def get_config(
     output_head: Explicitly choose output head; automatically selected if None.
     num_classes: Number of classes for categorical output head.
     train_conditions: Conditions used for training, as string separated by '+'. If None, uses dataset defaults.
-    dataset_name: Dataset to use. Defaults to constants.DEFAULT_DATASET.
+    dataset_name: Dataset to use. Defaults to None
     runlocal: Whether running locally or remotely.
     timeseries: Name of the timeseries in dataset specs. If None, uses dataset default.
     covariate_series: Name of the covariates in dataset covariate specs. If None, uses dataset default.
@@ -122,6 +174,9 @@ def get_config(
   c = mlc.ConfigDict()
   soma_ids = [int(x) for x in soma_ids.split(':') if x]
 
+  if not dataset_name:
+    print('no dataset_name, defaulting to DEFAULT_DATASET')
+    dataset_name = constants.DEFAULT_DATASET
   dataset_config = constants.get_dataset_config(dataset_name)
   c.dataset_name = dataset_name
 
@@ -235,23 +290,35 @@ def get_config(
   c.prediction_window_length = constants.PREDICTION_WINDOW_LENGTH
   c.num_warmup_infer_steps = 0
   c.infer_spec = {
-      'timeseries': data_utils.get_spec(c.timeseries, soma_ids, dataset_name=dataset_name).to_json(),
-      'covariates': data_utils.get_covariate_spec(c.covariate_series, dataset_name=dataset_name).to_json(),
+      'timeseries': data_utils.get_spec(
+          c.timeseries, soma_ids, dataset_name=dataset_name
+      ).to_json(),
+      'covariates': data_utils.get_covariate_spec(
+          c.covariate_series, dataset_name=dataset_name
+      ).to_json(),
   }
-  c.infer_sets = get_infer_sets(
-      num_timesteps_context=c.timesteps_input_infer + c.num_warmup_infer_steps,
-      dataset_name=dataset_name,
-  )
-  c.infer_batching_str = (  # 1x...
-      'expand_dims(keys=("timeseries_input","timeseries_output","covariates_input","covariates_output"),axis=0)'  # pylint: disable=line-too-long
-  )
+  if 'condition_offsets' in dataset_config:
+    c.infer_sets = get_infer_sets(
+        num_timesteps_context=c.timesteps_input_infer
+        + c.num_warmup_infer_steps,
+        dataset_name=dataset_name,
+    )
+  if 'condition_intervals' in dataset_config:
+    c.infer_idx_sets = get_infer_idx_sets(
+        num_timesteps_context=c.timesteps_input_infer
+        + c.num_warmup_infer_steps,
+        dataset_name=dataset_name,
+    )
+  c.infer_batching_str = 'expand_dims(keys=("timeseries_input","timeseries_output","covariates_input","covariates_output"),axis=0)'  # 1x...  # pylint: disable=line-too-long
   c.infer_save_array = True
   # {workdir}, {step} will be replaced, if present in prefix:
   c.infer_prefix = 'file://{workdir}/inference/step/{step}'
   c.infer_with_carry = False
 
   # Series
-  c.series_spec_shape = data_utils.get_spec(c.timeseries, soma_ids, dataset_name=dataset_name).shape
+  c.series_spec_shape = data_utils.get_spec(
+      c.timeseries, soma_ids, dataset_name=dataset_name
+  ).shape
   c.series_shape = (1, timesteps_input, c.series_spec_shape[1])
 
   # Covariates

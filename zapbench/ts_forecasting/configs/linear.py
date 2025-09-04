@@ -31,6 +31,7 @@ _ARGS = immutabledict.immutabledict({
     'seed': -1,
     'timesteps_input': 4,
     'runlocal': True,
+    'dataset_name': 'subject_17',
 })
 
 _EXPERIMENTS = {
@@ -59,11 +60,15 @@ def get_config(arg: str | None = None) -> mlc.ConfigDict:
   config.update(common.get_config(**config.arg))
 
   config.model_class = 'nlinear.Nlinear'
-  config.nlinear_config = mlc.ConfigDict(dataclasses.asdict(
-      nlinear.NlinearConfig(
-          constant_init=True,
-          normalization=config.arg.normalization,
-          num_outputs=constants.PREDICTION_WINDOW_LENGTH)))
+  config.nlinear_config = mlc.ConfigDict(
+      dataclasses.asdict(
+          nlinear.NlinearConfig(
+              constant_init=True,
+              normalization=config.arg.normalization,
+              num_outputs=constants.PREDICTION_WINDOW_LENGTH,
+          )
+      )
+  )
 
   return config
 

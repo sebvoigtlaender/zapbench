@@ -17,9 +17,9 @@
 import dataclasses
 from typing import Any, Sequence
 
-from connectomics.jax import grain_util
 import grain.python as grain
 import tensorstore as ts
+from connectomics.jax import grain_util
 
 FlatFeatures = grain_util.FlatFeatures
 
@@ -61,9 +61,7 @@ class TensorStoreTimeSeries:
         output is a one-step ahead shifted version of input.
     """
     if not sequential and config.timesteps_input != config.timesteps_output:
-      raise ValueError(
-          'Input and output timesteps must be equal for non-sequential source.')
-
+      raise ValueError('Input and output timesteps must be equal for non-sequential source.')
     self.volume = ts.open(config.input_spec).result()
 
     if prefetch:
@@ -105,10 +103,8 @@ class TensorStoreTimeSeries:
     original_timesteps = None
 
     # Check for gaps
-    for output in transform.get('output', []):
-      if 'index_array' in output:
-        original_timesteps = output['index_array'][0]
-        break
+    if 'output' in transform and 'index_array' in transform['output']:
+      original_timesteps = [t[0] for t in transform['output'][0]['index_array']]
 
     if original_timesteps is None:
       original_timesteps = list(range(self.volume.shape[0]))
@@ -150,9 +146,7 @@ class TensorStoreTimeSeries:
     t_indexer_output = slice(out_start, out_start + self.t_out)
     if not self.prefetch:
       input_array = self.volume[t_indexer_input, self.n_indexer].read().result()
-      output_array = (
-          self.volume[t_indexer_output, self.n_indexer].read().result()
-      )
+      output_array = self.volume[t_indexer_output, self.n_indexer].read().result()
     else:
       input_array = self.array[t_indexer_input, self.n_indexer]
       output_array = self.array[t_indexer_output, self.n_indexer]
@@ -163,17 +157,20 @@ class TensorStoreTimeSeries:
     })
 
   def __repr__(self) -> str:
-    return (
-        f'TensorStoreTimeSeries(config={self.config}, prefetch={self.prefetch},'
-        + f' transforms={self.transforms!r}), sequential={self.sequential}'
-    )
+    return f'TensorStoreTimeSeries(config={self.config}, prefetch={self.prefetch},' + f' transforms={self.transforms!r}), sequential={self.sequential}'
 
   @property
   def item_shape(self) -> dict[str, tuple[int, ...]]:
     return {
         'timestep': tuple(),
-        f'{self.prefix}_input': (self.t_in, self.n_len,),
-        f'{self.prefix}_output': (self.t_out, self.n_len,),
+        f'{self.prefix}_input': (
+            self.t_in,
+            self.n_len,
+        ),
+        f'{self.prefix}_output': (
+            self.t_out,
+            self.n_len,
+        ),
     }
 
 
@@ -200,11 +197,7 @@ class MergedTensorStoreTimeSeries:
     return out
 
   def __repr__(self) -> str:
-    return (
-        'MergedTensorStoreTimeSeries('
-        + ','.join([f'{s}' for s in self.srcs])
-        + ')'
-    )
+    return 'MergedTensorStoreTimeSeries(' + ','.join([f'{s}' for s in self.srcs]) + ')'
 
   @property
   def item_shape(self) -> dict[str, tuple[int, ...]]:
@@ -246,11 +239,7 @@ class ConcatenatedTensorStoreTimeSeries:
     return self.srcs[src_idx][local_record_key]
 
   def __repr__(self) -> str:
-    return (
-        'ConcatenatedTensorStoreTimeSeries('
-        + ','.join([f'{s}' for s in self.srcs])
-        + ')'
-    )
+    return 'ConcatenatedTensorStoreTimeSeries(' + ','.join([f'{s}' for s in self.srcs]) + ')'
 
   @property
   def item_shape(self) -> dict[str, tuple[int, ...]]:

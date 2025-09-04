@@ -221,6 +221,7 @@ def inference(
   covariates_static = input_pipeline.get_static_covariates(config)
 
   # Initialize head.
+  # TODO: careful about the 'name' arg here that comes from infer_sets!
   head = heads.create_head(config)
 
   # Set up checkpointing.

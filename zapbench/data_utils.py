@@ -19,16 +19,19 @@ import json
 import logging
 from typing import Any, Optional, Sequence
 
-from connectomics.common import file
 import numpy as np
 import pandas as pd
 import tensorstore as ts
+from connectomics.common import file
+
 from zapbench import constants
 
 logger = logging.getLogger(__name__)
 
 
-def restrict_specs_to_somas(spec: dict[str, Any], soma_ids: Sequence[int] = tuple()) -> dict[str, Any]:
+def restrict_specs_to_somas(
+    spec: dict[str, Any], soma_ids: Sequence[int] = tuple()
+) -> dict[str, Any]:
   """Updates a spec to restrict it to specific soma IDs."
 
   Args:
@@ -43,14 +46,18 @@ def restrict_specs_to_somas(spec: dict[str, Any], soma_ids: Sequence[int] = tupl
 
   spec = copy.deepcopy(spec)
   spec['transform']['output'] = [
-    {'input_dimension': 0},
-    {'index_array': [soma_ids]}
+      {'input_dimension': 0},
+      {'index_array': [soma_ids]},
   ]
   spec['transform']['input_exclusive_max'][1] = len(soma_ids)
   return spec
 
 
-def get_spec(spec_name: str, soma_ids: Sequence[int] = tuple(), dataset_name: str = constants.DEFAULT_DATASET) -> ts.Spec:
+def get_spec(
+    spec_name: str,
+    soma_ids: Sequence[int] = tuple(),
+    dataset_name: str = constants.DEFAULT_DATASET,
+) -> ts.Spec:
   """Gets TensorStore spec from dataset-specific SPECS.
 
   Args:
@@ -69,7 +76,9 @@ def get_spec(spec_name: str, soma_ids: Sequence[int] = tuple(), dataset_name: st
   return ts.Spec(restrict_specs_to_somas(spec_dict, soma_ids))
 
 
-def get_covariate_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DATASET) -> ts.Spec:
+def get_covariate_spec(
+    spec_name: str, dataset_name: str = constants.DEFAULT_DATASET
+) -> ts.Spec:
   """Gets TensorStore spec from dataset-specific COVARIATE_SPECS.
 
   Args:
@@ -81,13 +90,17 @@ def get_covariate_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DAT
   """
   dataset_config = constants.get_dataset_config(dataset_name)
   if spec_name not in dataset_config['covariate_specs']:
-    raise ValueError(f'{spec_name} not in dataset {dataset_name} covariate specs.')
+    raise ValueError(
+        f'{spec_name} not in dataset {dataset_name} covariate specs.'
+    )
   spec_dict = dataset_config['covariate_specs'][spec_name]
 
   return ts.Spec(spec_dict)
 
 
-def get_position_embedding_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DATASET) -> ts.Spec:
+def get_position_embedding_spec(
+    spec_name: str, dataset_name: str = constants.DEFAULT_DATASET
+) -> ts.Spec:
   """Gets TensorStore spec from dataset-specific POSITION_EMBEDDING_SPECS with fallback.
 
   Args:
@@ -99,13 +112,17 @@ def get_position_embedding_spec(spec_name: str, dataset_name: str = constants.DE
   """
   dataset_config = constants.get_dataset_config(dataset_name)
   if spec_name not in dataset_config['position_embedding_specs']:
-    raise ValueError(f'{spec_name} not in dataset {dataset_name} position embedding specs.')
+    raise ValueError(
+        f'{spec_name} not in dataset {dataset_name} position embedding specs.'
+    )
   spec_dict = dataset_config['position_embedding_specs'][spec_name]
 
   return ts.Spec(spec_dict)
 
 
-def get_rastermap_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DATASET) -> ts.Spec:
+def get_rastermap_spec(
+    spec_name: str, dataset_name: str = constants.DEFAULT_DATASET
+) -> ts.Spec:
   """Gets TensorStore spec from dataset-specific RASTERMAP_SPECS with fallback.
 
   Args:
@@ -117,13 +134,17 @@ def get_rastermap_spec(spec_name: str, dataset_name: str = constants.DEFAULT_DAT
   """
   dataset_config = constants.get_dataset_config(dataset_name)
   if spec_name not in dataset_config['rastermap_specs']:
-    raise ValueError(f'{spec_name} not in dataset {dataset_name} rastermap specs.')
+    raise ValueError(
+        f'{spec_name} not in dataset {dataset_name} rastermap specs.'
+    )
   spec_dict = dataset_config['rastermap_specs'][spec_name]
 
   return ts.Spec(spec_dict)
 
 
-def get_segmentation_dataframe(df_name: str, dataset_name: str = constants.DEFAULT_DATASET) -> pd.DataFrame:
+def get_segmentation_dataframe(
+    df_name: str, dataset_name: str = constants.DEFAULT_DATASET
+) -> pd.DataFrame:
   """Gets segmentation dataframe from dataset-specific SEGMENTATION_DATAFRAMES with fallback.
 
   Can be mapped to segmentations through the label-column and to indices in
@@ -138,14 +159,18 @@ def get_segmentation_dataframe(df_name: str, dataset_name: str = constants.DEFAU
   """
   dataset_config = constants.get_dataset_config(dataset_name)
   if df_name not in dataset_config['segmentation_dataframes']:
-    raise ValueError(f'{df_name} not in dataset {dataset_name} segmentation dataframes.')
+    raise ValueError(
+        f'{df_name} not in dataset {dataset_name} segmentation dataframes.'
+    )
   path = dataset_config['segmentation_dataframes'][df_name]
   with file.Path(path).open('r') as f:
     df = pd.DataFrame(json.load(f))
   return df.sort_values('label').reset_index(drop=True)
 
 
-def get_condition_bounds(condition: int, dataset_name: str = constants.DEFAULT_DATASET) -> tuple[int, int]:
+def get_condition_bounds(
+    condition: int, dataset_name: str = constants.DEFAULT_DATASET
+) -> tuple[int, int]:
   """Get bounds of a condition's temporal indices with dataset-specific offsets.
 
   Args:
@@ -157,7 +182,9 @@ def get_condition_bounds(condition: int, dataset_name: str = constants.DEFAULT_D
   """
   dataset_config = constants.get_dataset_config(dataset_name)
   condition_offsets = dataset_config['condition_offsets']
-  condition_padding = constants.CONDITION_PADDING  # Still global (dataset-agnostic)
+  condition_padding = (
+      constants.CONDITION_PADDING
+  )  # Still global (dataset-agnostic)
 
   if condition < 0 or condition >= len(condition_offsets) - 1:
     raise ValueError(f'condition must be in [0, {len(condition_offsets)-1}]')
@@ -236,7 +263,9 @@ def get_num_windows(
   )
 
 
-def get_condition_intervals(condition: int, dataset_name: str = constants.DEFAULT_DATASET) -> tuple[tuple[int, int], ...]:
+def get_condition_intervals(
+    condition: int, dataset_name: str
+) -> tuple[tuple[int, int], ...]:
   """Get padded intervals for a condition."""
   dataset_config = constants.get_dataset_config(dataset_name)
   intervals = dataset_config['condition_intervals'][condition]
@@ -246,7 +275,9 @@ def get_condition_intervals(condition: int, dataset_name: str = constants.DEFAUL
     padded_start = start + constants.CONDITION_PADDING
     padded_end = end - constants.CONDITION_PADDING
     if not (padded_start < padded_end):
-      logger.warning(f"Padded interval [{padded_start}, {padded_end}) is not valid")
+      logger.warning(
+          f'Padded interval [{padded_start}, {padded_end}) is not valid'
+      )
       continue
     padded_intervals.append((padded_start, padded_end))
 
@@ -256,16 +287,23 @@ def get_condition_intervals(condition: int, dataset_name: str = constants.DEFAUL
 def calculate_window_size(num_timesteps_context: int) -> int:
   """Calculate window size with safety checks."""
   if num_timesteps_context <= 0:
-    raise ValueError(f"num_timesteps_context must be > 0, got {num_timesteps_context}")
+    raise ValueError(
+        f'num_timesteps_context must be > 0, got {num_timesteps_context}'
+    )
 
   if num_timesteps_context > constants.MAX_CONTEXT_LENGTH:
-    raise ValueError(f"num_timesteps_context {num_timesteps_context} exceeds MAX_CONTEXT_LENGTH {constants.MAX_CONTEXT_LENGTH}")
+    raise ValueError(
+        f'num_timesteps_context {num_timesteps_context} exceeds'
+        f' MAX_CONTEXT_LENGTH {constants.MAX_CONTEXT_LENGTH}'
+    )
 
   window_size = num_timesteps_context + constants.PREDICTION_WINDOW_LENGTH
   return window_size
 
 
-def build_valid_timesteps(intervals: tuple[tuple[int, int], ...], window_size: int) -> list[int]:
+def build_valid_timesteps(
+    intervals: tuple[tuple[int, int], ...], window_size: int
+) -> list[int]:
   """Build timesteps that can start complete windows within intervals."""
   valid_timesteps = []
 
@@ -275,12 +313,56 @@ def build_valid_timesteps(intervals: tuple[tuple[int, int], ...], window_size: i
     if interval_size >= window_size:
       valid_timesteps.extend(range(start, end - window_size + 1))
     else:
-      logger.warning(f"Interval [{start}, {end}) too small for window_size {window_size}")
+      logger.warning(
+          f'Interval [{start}, {end}) too small for window_size {window_size}'
+      )
 
   if not valid_timesteps:
-    raise ValueError(f"No intervals large enough for window_size={window_size}.")
+    raise ValueError(
+        f'No intervals large enough for window_size={window_size}.'
+    )
 
   return sorted(valid_timesteps)
+
+
+def adjust_valid_timesteps_for_split(
+    valid_timesteps: list[int], split: str, num_timesteps_context: int
+) -> list[int]:
+  """Adjust valid timesteps for a split."""
+  if split:
+    total = len(valid_timesteps)
+    test_count = int(total * constants.TEST_FRACTION)
+    val_count = int(total * constants.VAL_FRACTION)
+    train_count = total - test_count - val_count
+
+    if split == 'train':
+      valid_timesteps = valid_timesteps[:train_count]
+    elif split == 'val':
+      val_start = max(0, train_count - num_timesteps_context)
+      valid_timesteps = valid_timesteps[val_start : train_count + val_count]
+    elif split == 'test':
+      test_start = max(0, train_count + val_count - num_timesteps_context)
+      valid_timesteps = valid_timesteps[test_start:]
+    elif split == 'test_holdout':
+      holdout_start = max(
+          0,
+          total - constants.MAX_CONTEXT_LENGTH - num_timesteps_context,
+      )
+      valid_timesteps = valid_timesteps[holdout_start:]
+  return valid_timesteps
+
+
+def get_condition_idx_for_split(
+    condition: int, num_timesteps_context: int, split: str, dataset_name: str
+) -> list[int]:
+  """Get condition indices for a split."""
+  intervals = get_condition_intervals(condition, dataset_name)
+  window_size = calculate_window_size(num_timesteps_context)
+  valid_timesteps = build_valid_timesteps(intervals, window_size)
+  valid_timesteps = adjust_valid_timesteps_for_split(
+      valid_timesteps, split, num_timesteps_context
+  )
+  return valid_timesteps
 
 
 def adjust_spec_for_condition_and_split(
@@ -288,7 +370,7 @@ def adjust_spec_for_condition_and_split(
     condition: int,
     split: Optional[str],
     num_timesteps_context: int,
-    dataset_name: str = constants.DEFAULT_DATASET,
+    dataset_name: str,
 ) -> ts.Spec:
   """Adjust spec for multi-interval conditions with gap-aware windowing.
 
@@ -317,38 +399,31 @@ def adjust_spec_for_condition_and_split(
   intervals = get_condition_intervals(condition, dataset_name)
   window_size = calculate_window_size(num_timesteps_context)
   valid_timesteps = build_valid_timesteps(intervals, window_size)
-
-  if split:
-    total = len(valid_timesteps)
-    test_count = int(total * constants.TEST_FRACTION)
-    val_count = int(total * constants.VAL_FRACTION)
-    train_count = total - test_count - val_count
-
-    if split == 'train':
-      valid_timesteps = valid_timesteps[:train_count]
-    elif split == 'val':
-      val_start = max(0, train_count - num_timesteps_context)
-      valid_timesteps = valid_timesteps[val_start:train_count + val_count]
-    elif split == 'test':
-      test_start = max(0, train_count + val_count - num_timesteps_context)
-      valid_timesteps = valid_timesteps[test_start:]
-    elif split == 'test_holdout':
-      holdout_start = max(0, total - constants.MAX_CONTEXT_LENGTH - constants.PREDICTION_WINDOW_LENGTH)
-      valid_timesteps = valid_timesteps[holdout_start:]
+  valid_timesteps = adjust_valid_timesteps_for_split(
+      valid_timesteps, split, num_timesteps_context
+  )
 
   # Use non-slice indexing for non-contiguous case
-  is_contiguous = len(valid_timesteps) == (valid_timesteps[-1] - valid_timesteps[0] + 1)
+  is_contiguous = len(valid_timesteps) == (
+      valid_timesteps[-1] - valid_timesteps[0] + 1
+  )
   if is_contiguous:
-    return spec[ts.d['t'][slice(valid_timesteps[0], valid_timesteps[-1] + 1)]].translate_to[0]
+    return spec[
+        ts.d['t'][slice(valid_timesteps[0], valid_timesteps[-1] + 1)]
+    ].translate_to[0]
   else:
     return spec[ts.d['t'][valid_timesteps]].translate_to[0]
 
 
-def get_rastermap_indices(timeseries: str, dataset_name: str = constants.DEFAULT_DATASET) -> np.ndarray:
+def get_rastermap_indices(
+    timeseries: str, dataset_name: str = constants.DEFAULT_DATASET
+) -> np.ndarray:
   """Gets rastermap indices with dataset-aware fallback."""
   dataset_config = constants.get_dataset_config(dataset_name)
   if timeseries not in dataset_config['rastermap_sortings']:
-    raise ValueError(f'{timeseries} not in dataset {dataset_name} rastermap sortings.')
+    raise ValueError(
+        f'{timeseries} not in dataset {dataset_name} rastermap sortings.'
+    )
   return json.loads(
       file.Path(
           dataset_config['rastermap_sortings'][timeseries],
@@ -356,6 +431,10 @@ def get_rastermap_indices(timeseries: str, dataset_name: str = constants.DEFAULT
   )
 
 
-def get_indices_to_invert_rastermap_sorting(timeseries: str, dataset_name: str = constants.DEFAULT_DATASET) -> np.ndarray:
+def get_indices_to_invert_rastermap_sorting(
+    timeseries: str, dataset_name: str = constants.DEFAULT_DATASET
+) -> np.ndarray:
   """Gets indices that invert rastermap sorting with dataset-aware fallback."""
-  return np.argsort(get_rastermap_indices(timeseries, dataset_name=dataset_name))
+  return np.argsort(
+      get_rastermap_indices(timeseries, dataset_name=dataset_name)
+  )

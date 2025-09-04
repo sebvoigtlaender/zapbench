@@ -17,12 +17,12 @@
 import dataclasses
 from typing import Any
 
-from clu import metrics as clu_metrics
 import connectomics.jax.metrics as metrics_lib
 import distrax
 import jax.numpy as jnp
 import ml_collections as mlc
 import optax
+from clu import metrics as clu_metrics
 
 from zapbench.ts_forecasting import util
 
@@ -143,10 +143,18 @@ def create_head(config: mlc.ConfigDict) -> Head:
     metrics['val'] = util.get_metrics_collection(
         loss_metrics + common_metrics, prefix='val_'
     )
-    for infer_set in config.infer_sets:
-      metrics[f'infer_{infer_set["name"]}'] = util.get_metrics_collection(
-          common_metrics, prefix=f'infer_{infer_set["name"]}_'
-      )
+    if hasattr(config, 'infer_idx_sets'):
+      for infer_idx_set in config.infer_idx_sets:
+        metrics[f'infer_{infer_idx_set["name"]}'] = util.get_metrics_collection(
+            common_metrics, prefix=f'infer_{infer_idx_set["name"]}_'
+        )
+    elif hasattr(config, 'infer_sets'):
+      for infer_set in config.infer_sets:
+        metrics[f'infer_{infer_set["name"]}'] = util.get_metrics_collection(
+            common_metrics, prefix=f'infer_{infer_set["name"]}_'
+        )
+    else:
+      raise ValueError('No infer_idx_sets or infer_sets found.')
 
     return DeterministicHead(loss_fn=loss_fn, metrics=metrics)
 
@@ -164,10 +172,18 @@ def create_head(config: mlc.ConfigDict) -> Head:
         prefix='train_',
     )
     metrics['val'] = util.get_metrics_collection(loss_metrics, prefix='val_')
-    for infer_set in config.infer_sets:
-      metrics[f'infer_{infer_set["name"]}'] = util.get_metrics_collection(
-          infer_metrics, prefix=f'infer_{infer_set["name"]}_'
-      )
+    if hasattr(config, 'infer_idx_sets'):
+      for infer_idx_set in config.infer_idx_sets:
+        metrics[f'infer_{infer_idx_set["name"]}'] = util.get_metrics_collection(
+            infer_metrics, prefix=f'infer_{infer_idx_set["name"]}_'
+        )
+    elif hasattr(config, 'infer_sets'):
+      for infer_set in config.infer_sets:
+        metrics[f'infer_{infer_set["name"]}'] = util.get_metrics_collection(
+            infer_metrics, prefix=f'infer_{infer_set["name"]}_'
+        )
+    else:
+      raise ValueError('No infer_idx_sets or infer_sets found.')
     return CategoricalHead(
         metrics=metrics,
         lower=config.head_lower,

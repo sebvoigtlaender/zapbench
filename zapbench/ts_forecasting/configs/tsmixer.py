@@ -14,17 +14,17 @@
 
 """TSMixer models."""
 
-from collections import abc
 import dataclasses
+from collections import abc
 
-from connectomics.jax import config_util
 import immutabledict
 import ml_collections as mlc
+from connectomics.jax import config_util
+
 from zapbench import constants
 from zapbench import hparam_utils as hyper
 from zapbench.models import tsmixer
 from zapbench.ts_forecasting.configs import common
-
 
 _ARGS = immutabledict.immutabledict({
     'dropout_prob': 0.0,
@@ -34,6 +34,7 @@ _ARGS = immutabledict.immutabledict({
     'seed': -1,
     'timesteps_input': 4,
     'soma_ids': '',
+    'dataset_name': 'subject_17',
 })
 
 _EXPERIMENTS = {
