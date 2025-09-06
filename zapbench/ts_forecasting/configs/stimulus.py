@@ -62,7 +62,7 @@ def get_config(arg: str | None = None) -> mlc.ConfigDict:
       (
           1,
           constants.PREDICTION_WINDOW_LENGTH,
-          data_utils.get_covariate_spec(config.covariate_series).shape[-1],
+          data_utils.get_covariate_spec(config.covariate_series, config.dataset_name).shape[-1],
       ),
   )
 

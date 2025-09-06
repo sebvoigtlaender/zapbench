@@ -33,6 +33,7 @@ _ARGS = immutabledict.immutabledict({
     'ablate_static_covariates': True,
     'seed': -1,
     'timesteps_input': 4,
+    'runlocal': True,
     'dataset_name': 'subject_17',
 })
 
@@ -73,9 +74,9 @@ def get_config(arg: str | None = None) -> mlc.ConfigDict:
   config.per_device_batch_size = 1
 
   static_covariates_spec = data_utils.get_position_embedding_spec(
-      config.timeseries)
+      config.timeseries, config.dataset_name)
   dynamic_covariates_spec = data_utils.get_covariate_spec(
-      config.covariate_series)
+      config.covariate_series, config.dataset_name)
 
   config.covariates = (
       'covariates_static',

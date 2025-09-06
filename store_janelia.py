@@ -9,7 +9,7 @@ import tensorstore as ts
 PATH_JANELIA = "/Users/s/vault/neural_data/janelia"
 PATH_STORE = "/Users/s/vault/neural_data/janelia/ts_files"
 
-SUBJECT_ID_LIST = [5, 6, 14, 17]
+SUBJECT_ID_LIST = [5, 6, 14, 16, 17]
 N_STIMULUS_ENCODINGS = 16
 CONDITION_NAMES = ['spontaneous', 'taxis', 'dark-taxis', 'dark', 'opt_response', 'looming']
 CONDITION_MAP = {
@@ -122,7 +122,7 @@ def write_spec_to_constants_file(subject_key: str, spec: Dict[str, Any]) -> None
     spec_lines = []
     spec_lines.append(f"    '{subject_key}': {{")
 
-    spec_lines.append(f"        'condition_intervals': {spec['condition_intervals']},")
+    spec_lines.append(f"        'condition_intervals': ({spec['condition_intervals']},),")
     spec_lines.append(f"        'condition_names': {spec['condition_names']},")
     spec_lines.append(f"        'conditions_train': {spec['conditions_train']},")
     spec_lines.append(f"        'conditions_holdout': {spec['conditions_holdout']},")
@@ -227,6 +227,15 @@ def get_janelia_spec(subject_id: int,
             subject_str: (-0.25, 3.0),
         },
         'position_embedding_specs': {
+            subject_str: {
+                'kvstore': f'file://{PATH_STORE}/{subject_str}_coordinates.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[n_neurons], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            },
         },
         'segmentation_dataframes': {
         },
@@ -247,6 +256,8 @@ def process_janelia_subject(subject_id: int) -> Dict[str, Any]:
 
     with h5py.File(f"{h5_path}/TimeSeries.h5", "r") as f:
         x_traces = np.array(f['CellResp']).astype(np.float32)
+        abs_ix = f['absIX']
+        abs_ix = (abs_ix[0] - 1).astype(int)
 
     jan_avg, jan_std = np.mean(x_traces), np.std(x_traces)
     x_traces_normalized = ((x_traces - jan_avg) / jan_std) * ZAP_STD + ZAP_AVG
@@ -267,12 +278,19 @@ def process_janelia_subject(subject_id: int) -> Dict[str, Any]:
     assert stimuli_onehot.shape == (n_t, N_STIMULUS_ENCODINGS)
     save_tensorstore(stimuli_onehot, f"{subject_id:02d}", "stimuli")
 
+    if 'CellXYZ_norm' in data_struct.dtype.names:
+      all_cell_coordinates = data_struct['CellXYZ_norm']
+      coordinates = all_cell_coordinates[abs_ix]
+      save_tensorstore(coordinates, f"{subject_id:02d}", "coordinates")
+    else:
+      raise ValueError(f"cell coordinates not found for subject {subject_id:02d}")
+
     if 'Behavior_full' in data_struct.dtype.names:
         behavioral_covariates = data_struct['Behavior_full'].T.astype(np.float32)
         assert behavioral_covariates.shape == (n_t, 5), f"Expected (n_t, 5), got {behavioral_covariates.shape}"
         save_tensorstore(behavioral_covariates, f"{subject_id:02d}", "behavioral_covariates")
     else:
-        raise ValueError(f"Behavior_full not found for subject {subject_id:02d}")
+        raise ValueError(f"behavioral covariates not found for subject {subject_id:02d}")
 
     conditions, condition_intervals = get_condition_cfg(data_struct)
     condition_names = tuple(CONDITION_NAMES[i] for i in conditions)
@@ -283,8 +301,6 @@ def process_janelia_subject(subject_id: int) -> Dict[str, Any]:
     else:
         conditions_train = conditions[:-1]
         conditions_holdout = (conditions[-1],)
-
-
 
     spec = get_janelia_spec(
         subject_id=subject_id,

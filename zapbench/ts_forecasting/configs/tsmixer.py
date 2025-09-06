@@ -34,6 +34,7 @@ _ARGS = immutabledict.immutabledict({
     'seed': -1,
     'timesteps_input': 4,
     'soma_ids': '',
+    'runlocal': True,
     'dataset_name': 'subject_17',
 })
 

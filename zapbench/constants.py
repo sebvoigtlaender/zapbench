@@ -176,7 +176,17 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_05': (-0.25, 3.0)},
-        'position_embedding_specs': {},
+        'position_embedding_specs': {
+            'subject_05': {
+                'kvstore': 'file:///Users/s/vault/neural_data/janelia/ts_files/subject_05_coordinates.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[97766], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -220,7 +230,17 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_06': (-0.25, 3.0)},
-        'position_embedding_specs': {},
+        'position_embedding_specs': {
+            'subject_06': {
+                'kvstore': 'file:///Users/s/vault/neural_data/janelia/ts_files/subject_06_coordinates.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[92538], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -264,7 +284,75 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_14': (-0.25, 3.0)},
-        'position_embedding_specs': {},
+        'position_embedding_specs': {
+            'subject_14': {
+                'kvstore': 'file:///Users/s/vault/neural_data/janelia/ts_files/subject_14_coordinates.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[83205], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
+        'segmentation_dataframes': {},
+        'rastermap_specs': {},
+        'rastermap_sortings': {},
+    },
+    'subject_16': {
+        'condition_intervals': (
+            ((1360, 1876),),
+            ((0, 729),),
+            ((730, 1359),),
+        ),
+        'condition_names': ('spontaneous', 'taxis', 'opt_response'),
+        'conditions_train': (0, 1),
+        'conditions_holdout': (2,),
+        'timeseries_name': 'subject_16',
+        'covariate_series_name': 'subject_16_stimuli_features',
+        'specs': {
+            'subject_16': {
+                'kvstore': 'file:///Users/s/vault/neural_data/janelia/ts_files/subject_16_traces.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[1877], 62737],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+        },
+        'covariate_specs': {
+            'subject_16_stimuli_features': {
+                'kvstore': 'file:///Users/s/vault/neural_data/janelia/ts_files/subject_16_stimuli.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[1877], 16],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+            'subject_16_behavioral_covariates': {
+                'kvstore': 'file:///Users/s/vault/neural_data/janelia/ts_files/subject_16_behavioral_covariates.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[1877], 5],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+        },
+        'min_max_values': {'subject_16': (-0.25, 3.0)},
+        'position_embedding_specs': {
+            'subject_16': {
+                'kvstore': 'file:///Users/s/vault/neural_data/janelia/ts_files/subject_16_coordinates.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[62737], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -284,8 +372,8 @@ DATASET_CONFIGS = {
             'opt_response',
             'looming',
         ),
-        'conditions_train': (0, 1, 2, 3),
-        'conditions_holdout': (4,),
+        'conditions_train': (0, 1, 3, 4),
+        'conditions_holdout': (2,),
         'timeseries_name': 'subject_17',
         'covariate_series_name': 'subject_17_stimuli_features',
         'specs': {
@@ -320,7 +408,17 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_17': (-0.25, 3.0)},
-        'position_embedding_specs': {},
+        'position_embedding_specs': {
+            'subject_17': {
+                'kvstore': 'file:///Users/s/vault/neural_data/janelia/ts_files/subject_17_coordinates.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[63922], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},

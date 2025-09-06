@@ -77,7 +77,7 @@ def get_spec(
 
 
 def get_covariate_spec(
-    spec_name: str, dataset_name: str = constants.DEFAULT_DATASET
+    spec_name: str, dataset_name: str
 ) -> ts.Spec:
   """Gets TensorStore spec from dataset-specific COVARIATE_SPECS.
 
@@ -99,7 +99,7 @@ def get_covariate_spec(
 
 
 def get_position_embedding_spec(
-    spec_name: str, dataset_name: str = constants.DEFAULT_DATASET
+    spec_name: str, dataset_name: str
 ) -> ts.Spec:
   """Gets TensorStore spec from dataset-specific POSITION_EMBEDDING_SPECS with fallback.
 
