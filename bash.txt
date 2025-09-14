@@ -1,2 +1,0 @@
-nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,utilization.memory --format=csv
-CUDA_VISIBLE_DEVICES=3 python main_train.py --config configs/linear.py:dataset_name='subject_01' --workdir /home/sebastian/logs/zapbench/linear/subject_01
