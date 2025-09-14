@@ -32,10 +32,10 @@ _ARGS = immutabledict.immutabledict({
     'mlp_dim': 256,
     'n_block': 2,
     'seed': -1,
-    'timesteps_input': 4,
+    'timesteps_input': 32,
     'soma_ids': '',
-    'runlocal': True,
-    'dataset_name': 'subject_17',
+    'runlocal': False,
+    'dataset_name': 'subject_01',
 })
 
 _EXPERIMENTS = {
@@ -43,7 +43,7 @@ _EXPERIMENTS = {
         hyper.sweep('instance_norm', [False,]),
         hyper.sweep('n_block', [2,]),
         hyper.sweep('mlp_dim', [256,]),
-        hyper.sweep('timesteps_input', [4,]),
+        hyper.sweep('timesteps_input', [32,]),
         hyper.sweep('seed', [-1, -1, -1]),
     ]),
     'long_context': hyper.product([

@@ -29,14 +29,14 @@ from zapbench.ts_forecasting.configs import common
 _ARGS = immutabledict.immutabledict({
     'normalization': False,
     'seed': -1,
-    'timesteps_input': 4,
-    'runlocal': True,
-    'dataset_name': 'subject_17',
+    'timesteps_input': 32,
+    'runlocal': False,
+    'dataset_name': 'subject_01',
 })
 
 _EXPERIMENTS = {
     'short_and_long_context': hyper.product([
-        hyper.sweep('timesteps_input', [4, 256]),
+        hyper.sweep('timesteps_input', [32, 256]),
         hyper.sweep('seed', [-1, -1, -1]),
     ]),
 }

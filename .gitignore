@@ -31,3 +31,6 @@ poetry.lock
 CLAUDE.md
 **/CLAUDE.md
 claude_context/
+
+# Environment variables
+.env

@@ -31,10 +31,10 @@ _ARGS = immutabledict.immutabledict({
     'instance_norm': False,
     'n_block': 5,
     'seed': -1,
-    'timesteps_input': 4,
+    'timesteps_input': 32,
     'soma_ids': '',
-    'runlocal': True,
-    'dataset_name': 'subject_17',
+    'runlocal': False,
+    'dataset_name': 'subject_01',
 })
 
 _EXPERIMENTS = {
