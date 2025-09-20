@@ -362,7 +362,26 @@ def train_and_evaluate(
       max_runtime_stop=max_runtime_stop,
       track_best_val_loss_step=track_best_val_loss_step,
   )
-  if checkpoint_manager.latest_step() is not None:
+
+  if config.init_from_checkpoint:
+    logging.info('Initializing model weights from checkpoint: %s', config.init_from_checkpoint)
+    init_checkpoint_manager = checkpoint.get_checkpoint_manager(
+        config.init_from_checkpoint,
+        item_names=('train_state',),
+    )
+    if init_checkpoint_manager.latest_step() is not None:
+      init_state = checkpoint.restore_checkpoint(
+          init_checkpoint_manager,
+          state={'train_state': None},
+          step=init_checkpoint_manager.latest_step(),
+      )
+      train_state = train_state.replace(params=init_state['train_state']['params'])
+      checkpointed_state['train_state'] = train_state
+      logging.info('Successfully loaded pretrained weights from step %d', init_checkpoint_manager.latest_step())
+    else:
+      logging.warning('No checkpoint found at %s, training from scratch', config.init_from_checkpoint)
+
+  elif checkpoint_manager.latest_step() is not None:
     checkpointed_state = checkpoint.restore_checkpoint(
         checkpoint_manager,
         state=checkpointed_state,

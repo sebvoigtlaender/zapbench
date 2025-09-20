@@ -34,3 +34,8 @@ claude_context/
 
 # Environment variables
 .env
+
+# pixi
+pixi.lock
+pixi.toml
+.pixi/

@@ -32,6 +32,7 @@ _ARGS = immutabledict.immutabledict({
     'timesteps_input': 32,
     'runlocal': False,
     'dataset_name': 'subject_01',
+    'init_from_checkpoint': '',
 })
 
 _EXPERIMENTS = {

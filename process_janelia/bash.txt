@@ -1,0 +1,8 @@
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,utilization.memory --format=csv
+python main_train.py --config configs/linear.py:dataset_name='subject_01' --workdir /home/sebastian/logs/zapbench/linear/subject_01
+
+
+python main_train.py --config configs/linear.py:dataset_name='subject_05',runlocal=True --workdir /Users/s/vault/logs/linear/subject_05
+
+
+python main_infer.py --config configs/infer.py:exp_workdir=/Users/s/vault/logs/timemix/subject_05 --workdir /Users/s/vault/logs/timemix/subject_05

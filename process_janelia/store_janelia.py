@@ -11,11 +11,11 @@ import tensorstore as ts
 
 load_dotenv()
 PATH = os.getenv("ROOT_PATH")
-
+GIT_PATH = os.getenv("GIT_PATH")
 PATH_JANELIA = PATH
 PATH_STORE = f"{PATH}/ts_files"
 
-SUBJECT_ID_LIST = [1, 2, 3, 4, 5, 6, 7, 10, 12, 13,14, 15, 16, 17]
+SUBJECT_ID_LIST = [5, 6]
 N_STIMULUS_ENCODINGS = 16
 CONDITION_NAMES = ['spontaneous', 'taxis', 'dark-taxis', 'dark', 'opt_response', 'looming']
 CONDITION_MAP = {
@@ -123,7 +123,7 @@ def save_tensorstore(x: np.ndarray, subject_id: str, data_type: str) -> None:
 
 
 def write_spec_to_constants_file(subject_key: str, spec: Dict[str, Any]) -> None:
-    constants_file = "/home/sebastian/git/zapbench/constants.txt"
+    constants_file = f"{GIT_PATH}/constants.txt"
     if not os.path.exists(constants_file):
         os.makedirs(os.path.dirname(constants_file), exist_ok=True)
 

@@ -149,6 +149,7 @@ def get_config(
     log_loss_every_steps: int = 100,
     seed: int | tuple[int, int] | None = -1,
     soma_ids: str = '',
+    init_from_checkpoint: str = '',
     **unused_kwargs,
 ) -> mlc.ConfigDict:
   """Default config with dataset-aware parameter selection.
@@ -167,6 +168,7 @@ def get_config(
     log_loss_every_steps: Frequency of logging loss.
     seed: Optional random seed. Uses a randomly generated seed if None or
       integer small than zero.
+    init_from_checkpoint: Path to checkpoint directory to initialize model weights from. If empty, trains from scratch.
 
   Returns:
     A `mlc.ConfigDict` instance with the common configuration options.
@@ -202,6 +204,7 @@ def get_config(
   c.timeseries = timeseries
   c.covariate_series = covariate_series
   c.val_ckpt_every_steps = val_ckpt_every_steps
+  c.init_from_checkpoint = init_from_checkpoint
 
   # Validate
   assert c.timesteps_input <= constants.MAX_CONTEXT_LENGTH
