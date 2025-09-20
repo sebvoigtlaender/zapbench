@@ -29,6 +29,7 @@ from zapbench.ts_forecasting.configs import common
 _ARGS = immutabledict.immutabledict({
     'seed': -1,  # Model is parameter-free and deterministic.
     'timesteps_input': 4,  # Window to average over.
+    'runlocal': False,
     'dataset_name': 'subject_14',
 })
 
