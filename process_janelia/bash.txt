@@ -1,8 +1,13 @@
 nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,utilization.memory --format=csv
-python main_train.py --config configs/linear.py:dataset_name='subject_01' --workdir /home/sebastian/logs/zapbench/linear/subject_01
 
 
-python main_train.py --config configs/linear.py:dataset_name='subject_05',runlocal=True --workdir /Users/s/vault/logs/linear/subject_05
+TRAIN
+
+CUDA_VISIBLE_DEVICES=7 python zapbench/ts_forecasting/main_train.py --config zapbench/ts_forecasting/configs/timemix.py:dataset_name='subject_17',runlocal=True --workdir /mnt/storage/misc/exp/timemix/subject_17
 
 
-python main_infer.py --config configs/infer.py:exp_workdir=/Users/s/vault/logs/timemix/subject_05 --workdir /Users/s/vault/logs/timemix/subject_05
+
+
+INFER
+
+CUDA_VISIBLE_DEVICES=7 python zapbench/ts_forecasting/main_infer.py --config zapbench/ts_forecasting/configs/infer.py:exp_workdir=/mnt/storage/misc/exp/timemix/subject_17 --workdir /mnt/storage/misc/inference/timemix/subject_17

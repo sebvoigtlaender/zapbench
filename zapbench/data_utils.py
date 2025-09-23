@@ -311,7 +311,7 @@ def build_valid_timesteps(
     interval_size = end - start
 
     if interval_size >= window_size:
-      valid_timesteps.extend(range(start, end - window_size + 1))
+      valid_timesteps.extend(range(start, end))
     else:
       logger.warning(
           f'Interval [{start}, {end}) too small for window_size {window_size}'
@@ -344,10 +344,7 @@ def adjust_valid_timesteps_for_split(
       test_start = max(0, train_count + val_count - num_timesteps_context)
       valid_timesteps = valid_timesteps[test_start:]
     elif split == 'test_holdout':
-      holdout_start = max(
-          0,
-          total - constants.MAX_CONTEXT_LENGTH - num_timesteps_context,
-      )
+      holdout_start = constants.MAX_CONTEXT_LENGTH - num_timesteps_context
       valid_timesteps = valid_timesteps[holdout_start:]
   return valid_timesteps
 

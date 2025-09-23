@@ -67,17 +67,19 @@ class TensorStoreTimeSeries:
     if prefetch:
       self.array = self.volume.read().result()
 
-    offset = config.timesteps_input + config.timesteps_output if sequential else config.timesteps_input + 1
+    context = (
+      config.timesteps_input + config.timesteps_output
+      if sequential
+      else config.timesteps_input + 1
+    )
 
-    # Store config and other attributes before building record mapping
     self.config = config
     self.transforms = transforms
     self.prefetch = prefetch
     self.prefix = prefix
     self.sequential = sequential
 
-    # Always use unified record mapping (handles both contiguous and gap cases)
-    self.record_key_to_index = self._build_record_mapping(offset)
+    self.record_key_to_index = self._build_record_key_to_index(context)
     self._len = len(self.record_key_to_index)
     assert self._len > 0, 'Dataset too small for timestep settings.'
 
@@ -97,28 +99,30 @@ class TensorStoreTimeSeries:
       features = transform.map(features)
     return features
 
-  def _build_record_mapping(self, offset: int) -> dict[int, int]:
-    """Build mapping from record_key to TensorStore index for any indexing type."""
+  def _build_record_key_to_index(self, context: int) -> dict[int, int]:
+    """Build mapping from record_key to TensorStore index for proper indexing."""
     transform = self.config.input_spec.get('transform', {})
-    original_timesteps = None
+    x = None
 
-    # Check for gaps
-    if 'output' in transform and 'index_array' in transform['output']:
-      original_timesteps = [t[0] for t in transform['output'][0]['index_array']]
+    # if has gaps
+    if 'output' in transform and 'index_array' in transform['output'][0]:
+      x = [t[0] for t in transform['output'][0]['index_array']]
 
-    if original_timesteps is None:
-      original_timesteps = list(range(self.volume.shape[0]))
+    if x is None:
+      x = list(range(self.volume.shape[0]))
 
-    hash_map = {}
-    record_key = 0
-    for idx in range(len(original_timesteps) - offset + 1):
-      global_start = original_timesteps[idx]
-      global_end = original_timesteps[idx + offset - 1]
-      if global_end - global_start + 1 == offset:
-        hash_map[record_key] = idx
-        record_key += 1
+    return self._filter_indices(x, context)
 
-    return hash_map
+  def _filter_indices(self, x: list[int], context: int) -> dict[int, int]:
+    assert context > 0, f'context needs to be > 0, but got {context}'
+    positions, i_init = [], 0
+    for i in range(1, len(x) + 1):
+      if i == len(x) or x[i] != x[i - 1] + 1:
+        i_len = i - i_init
+        if i_len >= context:
+          positions.extend(range(i_init, i - context + 1))
+        i_init = i
+    return {k: p for k, p in enumerate(positions) if context > 0}
 
   def __getitem__(self, record_key: int) -> FlatFeatures:
     """Fetch the items with the given record keys using Tensorstore.
@@ -133,23 +137,22 @@ class TensorStoreTimeSeries:
     Raises:
       IndexError: when record_key out of bounds [0, self._len)
     """
-    if record_key >= self._len:
+    if record_key < 0 or record_key >= self._len:
       raise IndexError('Index out of bounds.')
 
-    idx = self.record_key_to_index[record_key]  # Always use mapping
+    idx = self.record_key_to_index[record_key]
 
     t_indexer_input = slice(idx, idx + self.t_in)
-    if self.sequential:
-      out_start = idx + self.t_in
-    else:
-      out_start = idx + 1
+    out_start = idx + self.t_in if self.sequential else idx + 1
     t_indexer_output = slice(out_start, out_start + self.t_out)
+
     if not self.prefetch:
       input_array = self.volume[t_indexer_input, self.n_indexer].read().result()
       output_array = self.volume[t_indexer_output, self.n_indexer].read().result()
     else:
       input_array = self.array[t_indexer_input, self.n_indexer]
       output_array = self.array[t_indexer_output, self.n_indexer]
+
     return self._apply_transforms({
         'timestep': record_key,
         f'{self.prefix}_input': input_array,

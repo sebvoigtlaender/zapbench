@@ -714,6 +714,41 @@ DATASET_CONFIGS = {
         'rastermap_specs': {},
         'rastermap_sortings': {},
     },
+    'janelia_pretrain': {
+        'condition_intervals': (((0, 37246),),),
+        'condition_names': ('pre-train',),
+        'conditions_train': (0,),
+        'conditions_holdout': (),
+        'timeseries_name': 'janelia_pretrain',
+        'covariate_series_name': 'janelia_pretrain_stimuli_features',
+        'specs': {
+            'janelia_pretrain': {
+                'kvstore': 'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_traces.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[37247], 50000],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+        },
+        'covariate_specs': {
+            'janelia_pretrain_stimuli_features': {
+                'kvstore': 'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_stimuli.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[37247], 16],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+        },
+        'min_max_values': {'janelia_pretrain': (-0.25, 3.0)},
+        'position_embedding_specs': {},
+        'segmentation_dataframes': {},
+        'rastermap_specs': {},
+        'rastermap_sortings': {},
+    },
 }
 
 
