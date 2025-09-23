@@ -25,8 +25,12 @@ import jax
 import ml_collections
 import numpy as np
 from absl import logging
-from clu import platform  # pylint: disable=unused-import
-from clu import metric_writers, parameter_overview, periodic_actions
+from clu import (
+  metric_writers,
+  parameter_overview,
+  periodic_actions,
+  platform,  # pylint: disable=unused-import
+)
 from connectomics.common import ts_utils
 from connectomics.jax import checkpoint, training
 from etils import epath
@@ -74,6 +78,18 @@ def _get_checkpoint_step(
     return checkpoint_manager.latest_step()
   else:
     raise ValueError(f'Unknown checkpoint selection: {selection_strategy}')
+
+
+def _filter_infer_indices(x: list[int], context: int) -> dict[int, int]:
+  assert context > 0, f'context needs to be > 0, but got {context}'
+  valid_infer_idx, i_init = [], 0
+  for i in range(1, len(x) + 1):
+    if i == len(x) or x[i] != x[i - 1] + 1:
+      i_len = i - i_init
+      if i_len >= context:
+        valid_infer_idx.extend(x[i_init:i - context + 1])
+      i_init = i
+  return valid_infer_idx
 
 
 def infer_single_step(
@@ -192,6 +208,7 @@ def inference(infer_config: ml_collections.ConfigDict, workdir: epath.PathLike):
 
   # Load data source for inference.
   infer_source = input_pipeline.create_inference_source_with_transforms(config)
+  context = config.timesteps_input_infer + config.timesteps_output_infer
   infer_prefix = config.infer_prefix.format(workdir=infer_workdir, step=step)
   platform.work_unit().create_artifact(
       platform.ArtifactType.DIRECTORY,
@@ -213,6 +230,7 @@ def inference(infer_config: ml_collections.ConfigDict, workdir: epath.PathLike):
     infer_key = jax.random.fold_in(key=infer_rng, data=step)
     for infer_idx_set in config.infer_idx_sets:
       name, idx_list = (infer_idx_set[k] for k in ('name', 'idx_list'))
+      idx_list = _filter_infer_indices(idx_list, context)
       infer_metrics = None
       with report_progress.timed(f'infer_{name}'):
         train_state = train.merge_batch_stats(train_state)
