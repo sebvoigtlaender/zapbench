@@ -87,31 +87,6 @@ def get_infer_sets(
   return sets
 
 
-# TEMPORARY FIX TO MAKE TRAINING WORK; PRODUCE WRONG INFERENCE RESULTS
-# def get_infer_sets(
-#     num_timesteps_context: int,
-#     dataset_name: str,
-# ) -> Sequence[dict[str, int | str]]:
-#   """Get infer sets config with dataset-aware conditions."""
-#   dataset_config = constants.get_dataset_config(dataset_name)
-#   conditions_train = dataset_config['conditions_train']
-#   conditions_holdout = dataset_config['conditions_holdout']
-
-#   sets = []
-#   for condition, split in [(t, 'test') for t in conditions_train] + [
-#       (t, 'test_holdout') for t in conditions_holdout
-#   ]:
-#     inclusive_min, exclusive_max = 0, 100
-#     sets.append({
-#         'name': f'{split}_condition_{condition}',
-#         'start_idx': inclusive_min,
-#         'num_windows': data_utils.get_num_windows(
-#             inclusive_min, exclusive_max, num_timesteps_context
-#         ),
-#     })
-#   return sets
-
-
 def get_infer_idx_sets(
     num_timesteps_context: int,
     dataset_name: str,
