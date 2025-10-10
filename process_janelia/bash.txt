@@ -1,0 +1,37 @@
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,utilization.memory --format=csv
+
+
+TRAIN
+
+CUDA_VISIBLE_DEVICES=7 python zapbench/ts_forecasting/main_train.py \
+--config zapbench/ts_forecasting/configs/linear.py:dataset_name='janelia_pretrain',runlocal=False,timesteps_input=32 \
+--workdir /mnt/storage/misc/exp/linear/janelia_pretrain
+
+
+
+INFER
+
+CUDA_VISIBLE_DEVICES=7 python zapbench/ts_forecasting/main_infer.py \
+--config zapbench/ts_forecasting/configs/infer.py:exp_workdir=/mnt/storage/misc/zapbench/training/n_steps_4/mean/zapbench \
+--workdir /mnt/storage/misc/zapbench/inference/n_steps_4/mean/zapbench
+
+
+
+CUDA_VISIBLE_DEVICES=7 python /home/sebastian/git/zapbench/zapbench/ts_forecasting/main_infer.py \
+--config /home/sebastian/git/zapbench/zapbench/ts_forecasting/configs/infer.py:exp_workdir=/mnt/storage/misc/exp/timemix/subject_01 \
+--workdir /mnt/storage/misc/zapbench/inference/n_steps_32/timemix/subject_01
+
+
+
+CUDA_VISIBLE_DEVICES=7 python zapbench/ts_forecasting/main_train.py \
+--config zapbench/ts_forecasting/configs/mean.py:dataset_name='janelia_pretrain',runlocal=False,timesteps_input=4 \
+--workdir /mnt/storage/misc/zapbench/training/n_steps_4/mean/janelia_pretrain
+
+
+
+
+
+
+
+
+

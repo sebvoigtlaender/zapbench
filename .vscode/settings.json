@@ -31,5 +31,5 @@
     "python.testing.pytestArgs": [
         "."
     ],
-    "python.defaultInterpreterPath": "/Users/s/miniconda3/envs/zapbench/bin/python"
+    "python.defaultInterpreterPath": "/home/sebastian/git/zapbench/.pixi/envs/default/bin/python"
 }

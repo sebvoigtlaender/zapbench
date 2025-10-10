@@ -32,9 +32,9 @@ _ARGS = immutabledict.immutabledict({
     'ablate_past_timeseries': False,
     'ablate_static_covariates': True,
     'seed': -1,
-    'timesteps_input': 4,
-    'runlocal': True,
-    'dataset_name': 'subject_17',
+    'timesteps_input': 32,
+    'runlocal': False,
+    'dataset_name': 'subject_01',
 })
 
 _EXPERIMENTS = {
