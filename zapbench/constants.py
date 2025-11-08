@@ -15,6 +15,13 @@
 """Constants for ZAPBench."""
 # pylint: disable=line-too-long
 
+import os
+
+import dotenv
+
+dotenv.load_dotenv()
+ROOT_PATH = os.getenv('ROOT_PATH')
+
 # Dataset-Agnostic Parameters (Global constants)
 VAL_FRACTION = 0.1
 TEST_FRACTION = 0.2
@@ -146,7 +153,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'subject_01_stimuli_features',
         'specs': {
             'subject_01': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_01_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_01_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 83205],
@@ -157,7 +166,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_01_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_01_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_01_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 16],
@@ -166,7 +177,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_01_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_01_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_01_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 5],
@@ -176,7 +187,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_01': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_01': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_01_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[83205], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_01': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_01_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[83205], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -190,7 +213,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'subject_02_stimuli_features',
         'specs': {
             'subject_02': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_02_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_02_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3520], 82514],
@@ -201,7 +226,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_02_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_02_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_02_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3520], 16],
@@ -210,7 +237,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_02_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_02_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_02_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3520], 5],
@@ -220,7 +247,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_02': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_02': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_02_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[82514], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_02': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_02_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[82514], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -234,7 +273,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'subject_03_stimuli_features',
         'specs': {
             'subject_03': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_03_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_03_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2560], 83662],
@@ -245,7 +286,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_03_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_03_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_03_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2560], 16],
@@ -254,7 +297,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_03_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_03_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_03_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2560], 5],
@@ -264,7 +307,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_03': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_03': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_03_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[83662], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_03': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_03_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[83662], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -278,7 +333,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'subject_04_stimuli_features',
         'specs': {
             'subject_04': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_04_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_04_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 90034],
@@ -289,7 +346,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_04_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_04_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_04_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 16],
@@ -298,7 +357,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_04_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_04_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_04_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 5],
@@ -308,7 +367,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_04': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_04': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_04_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[90034], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_04': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_04_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[90034], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -322,7 +393,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'subject_05_stimuli_features',
         'specs': {
             'subject_05': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_05_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_05_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 97766],
@@ -333,7 +406,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_05_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_05_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_05_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 16],
@@ -342,7 +417,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_05_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_05_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_05_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 5],
@@ -352,7 +427,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_05': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_05': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_05_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[97766], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_05': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_05_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[97766], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -366,7 +453,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'subject_06_stimuli_features',
         'specs': {
             'subject_06': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_06_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_06_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3780], 92538],
@@ -377,7 +466,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_06_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_06_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_06_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3780], 16],
@@ -386,7 +477,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_06_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_06_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_06_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3780], 5],
@@ -396,7 +487,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_06': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_06': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_06_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[92538], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_06': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_06_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[92538], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -410,7 +513,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'subject_07_stimuli_features',
         'specs': {
             'subject_07': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_07_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_07_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1650], 93810],
@@ -421,7 +526,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_07_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_07_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_07_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1650], 16],
@@ -430,7 +537,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_07_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_07_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_07_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1650], 5],
@@ -440,21 +547,47 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_07': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_07': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_07_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[93810], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_07': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_07_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[93810], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
     },
     'subject_12': {
-        'condition_intervals': (((2450, 3124),), ((0, 1229), (3425, 4629)), ((2100, 2449), (5500, 6139)), ((1230, 2099), (4630, 5499)), ((3125, 3424),)),
-        'condition_names': ('spontaneous', 'taxis', 'dark', 'opt_response', 'looming'),
+        'condition_intervals': (
+            ((2450, 3124),),
+            ((0, 1229), (3425, 4629)),
+            ((2100, 2449), (5500, 6139)),
+            ((1230, 2099), (4630, 5499)),
+            ((3125, 3424),),
+        ),
+        'condition_names': (
+            'spontaneous',
+            'taxis',
+            'dark',
+            'opt_response',
+            'looming',
+        ),
         'conditions_train': (0, 1, 2, 3),
         'conditions_holdout': (4,),
         'timeseries_name': 'subject_12',
         'covariate_series_name': 'subject_12_stimuli_features',
         'specs': {
             'subject_12': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_12_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_12_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[6140], 58105],
@@ -465,7 +598,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_12_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_12_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_12_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[6140], 16],
@@ -474,7 +609,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_12_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_12_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_12_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[6140], 5],
@@ -484,21 +619,47 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_12': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_12': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_12_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[58105], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_12': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_12_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[58105], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
     },
     'subject_13': {
-        'condition_intervals': (((1025, 1694), (3595, 4264)), ((0, 414), (2280, 2984)), ((800, 1024), (3370, 3594)), ((415, 799), (2985, 3369)), ((1695, 2279), (4265, 4839))),
-        'condition_names': ('spontaneous', 'taxis', 'dark', 'opt_response', 'looming'),
+        'condition_intervals': (
+            ((1025, 1694), (3595, 4264)),
+            ((0, 414), (2280, 2984)),
+            ((800, 1024), (3370, 3594)),
+            ((415, 799), (2985, 3369)),
+            ((1695, 2279), (4265, 4839)),
+        ),
+        'condition_names': (
+            'spontaneous',
+            'taxis',
+            'dark',
+            'opt_response',
+            'looming',
+        ),
         'conditions_train': (0, 1, 2, 3),
         'conditions_holdout': (4,),
         'timeseries_name': 'subject_13',
         'covariate_series_name': 'subject_13_stimuli_features',
         'specs': {
             'subject_13': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_13_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_13_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4840], 73202],
@@ -509,7 +670,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_13_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_13_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_13_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4840], 16],
@@ -518,7 +681,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_13_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_13_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_13_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4840], 5],
@@ -528,7 +691,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_13': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_13': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_13_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[73202], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_13': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_13_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[73202], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -539,15 +714,24 @@ DATASET_CONFIGS = {
             ((0, 834), (2940, 3764)),
             ((1600, 1949),),
             ((835, 1599), (3765, 3889)),
-            ((2475, 2939),)),
-        'condition_names': ('spontaneous', 'taxis', 'dark', 'opt_response', 'looming'),
+            ((2475, 2939),),
+        ),
+        'condition_names': (
+            'spontaneous',
+            'taxis',
+            'dark',
+            'opt_response',
+            'looming',
+        ),
         'conditions_train': (0, 1, 2, 3),
         'conditions_holdout': (4,),
         'timeseries_name': 'subject_14',
         'covariate_series_name': 'subject_14_stimuli_features',
         'specs': {
             'subject_14': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_14_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_14_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3890], 72412],
@@ -558,7 +742,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_14_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_14_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_14_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3890], 16],
@@ -567,7 +753,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_14_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_14_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_14_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3890], 5],
@@ -577,21 +763,47 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_14': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_14': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_14_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[72412], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_14': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_14_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[72412], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
     },
     'subject_15': {
-        'condition_intervals': (((1810, 2134), (4280, 4604)), ((0, 844), (2415, 3314)), ((1495, 1809), (3965, 4279)), ((845, 1494), (3315, 3964)), ((2135, 2414), (4605, 4879))),
-        'condition_names': ('spontaneous', 'taxis', 'dark', 'opt_response', 'looming'),
+        'condition_intervals': (
+            ((1810, 2134), (4280, 4604)),
+            ((0, 844), (2415, 3314)),
+            ((1495, 1809), (3965, 4279)),
+            ((845, 1494), (3315, 3964)),
+            ((2135, 2414), (4605, 4879)),
+        ),
+        'condition_names': (
+            'spontaneous',
+            'taxis',
+            'dark',
+            'opt_response',
+            'looming',
+        ),
         'conditions_train': (0, 1, 2, 3),
         'conditions_holdout': (4,),
         'timeseries_name': 'subject_15',
         'covariate_series_name': 'subject_15_stimuli_features',
         'specs': {
             'subject_15': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_15_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_15_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4880], 53180],
@@ -602,7 +814,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_15_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_15_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_15_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4880], 16],
@@ -611,7 +825,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_15_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_15_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_15_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4880], 5],
@@ -621,7 +835,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_15': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_15': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_15_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[53180], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_15': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_15_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[53180], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -635,7 +861,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'subject_16_stimuli_features',
         'specs': {
             'subject_16': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_16_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_16_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1877], 62737],
@@ -646,7 +874,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_16_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_16_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_16_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1877], 16],
@@ -655,7 +885,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_16_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_16_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_16_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1877], 5],
@@ -665,21 +895,47 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_16': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_16': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_16_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[62737], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_16': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_16_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[62737], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
     },
     'subject_17': {
-        'condition_intervals': (((2044, 2468), (4854, 5278)), ((0, 935), (2750, 3745)), ((1708, 2043), (4518, 4853)), ((936, 1707), (3746, 4517)), ((2469, 2749), (5279, 5553))),
-        'condition_names': ('spontaneous', 'taxis', 'dark', 'opt_response', 'looming'),
+        'condition_intervals': (
+            ((2044, 2468), (4854, 5278)),
+            ((0, 935), (2750, 3745)),
+            ((1708, 2043), (4518, 4853)),
+            ((936, 1707), (3746, 4517)),
+            ((2469, 2749), (5279, 5553)),
+        ),
+        'condition_names': (
+            'spontaneous',
+            'taxis',
+            'dark',
+            'opt_response',
+            'looming',
+        ),
         'conditions_train': (0, 1, 2, 3),
         'conditions_holdout': (4,),
         'timeseries_name': 'subject_17',
         'covariate_series_name': 'subject_17_stimuli_features',
         'specs': {
             'subject_17': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_17_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_17_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[5554], 63922],
@@ -690,7 +946,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'subject_17_stimuli_features': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_17_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_17_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[5554], 16],
@@ -699,7 +957,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_17_behavioral_covariates': {
-                'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_17_behavioral_covariates.zarr',
+                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_17_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[5554], 5],
@@ -709,7 +967,19 @@ DATASET_CONFIGS = {
             },
         },
         'min_max_values': {'subject_17': (-0.25, 3.0)},
-        'position_embedding_specs': {'subject_17': {'kvstore': 'file:///home/sebastian/data/janelia/ts_files/subject_17_coordinates.zarr', 'driver': 'zarr3', 'transform': {'input_exclusive_max': [[63922], 3], 'input_inclusive_min': [0, 0], 'input_labels': ['f', 'a']}}},
+        'position_embedding_specs': {
+            'subject_17': {
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/subject_17_coordinates.zarr'
+                ),
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[63922], 3],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['f', 'a'],
+                },
+            }
+        },
         'segmentation_dataframes': {},
         'rastermap_specs': {},
         'rastermap_sortings': {},
@@ -723,7 +993,7 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'janelia_pretrain_stimuli_features',
         'specs': {
             'janelia_pretrain': {
-                'kvstore': 'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_traces.zarr',
+                'kvstore': f'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_traces.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[37247], 50000],
@@ -734,7 +1004,7 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'janelia_pretrain_stimuli_features': {
-                'kvstore': 'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_stimuli.zarr',
+                'kvstore': f'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_stimuli.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[37247], 16],
