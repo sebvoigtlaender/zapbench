@@ -4,26 +4,25 @@ For details on the video forecasting models included in ZAPBench, refer to [our 
 
 ## Setup
 
+Run setup from the repository root:
+
 ```bash
-# Clone the repository
 git clone https://github.com/google-research/zapbench
 cd zapbench
 
-# ... potentially set up a venv or conda environment
-
-# Install `zapbench`
-pip install -e .
-
-# Change to the video forecasting directory
-cd zapbench/video_forecasting
+conda env create -f zapbench-env.yaml
+conda activate zapbench
 ```
+
+Use `conda env update -f zapbench-env.yaml` from the repository root when the
+committed environment definition changes.
 
 ## Training
 
 ```bash
 # See configs/ for available models and options.
-python main_train.py \
-  --config configs/unet_test.py \
+python zapbench/video_forecasting/main_train.py \
+  --config zapbench/video_forecasting/configs/unet_test.py \
   --workdir /dir/for/training
 ```
 
@@ -31,12 +30,13 @@ python main_train.py \
 
 ```bash
 # See configs/infer.py for additional options.
-python main_infer.py:/dir/for/inference \
-  --config configs/infer.py \
-  --workdir /dir/for/training
+python zapbench/video_forecasting/main_infer.py \
+  --config zapbench/video_forecasting/configs/infer.py:/dir/for/inference \
+  --config.exp_workdir=/dir/for/training \
+  --workdir /dir/for/inference
 ```
 
-Metric are written to a subdirectory within `/dir/for/inference` as json files,
+Metrics are written to a subdirectory within `/dir/for/inference` as JSON files,
 according to the `json_path_prefix` setting in the config.
 
 The json-files can be turned into a pandas dataframe using a utility function:

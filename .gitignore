@@ -21,16 +21,14 @@ poetry.lock
 # Other
 *.DS_Store
 
+# Disposable local RunPod inspection bundles
+/.runpod-runs/
+
 # PyCharm
 .idea
 
 # VS Code
 .vscode/
-
-# Claude-related files
-CLAUDE.md
-**/CLAUDE.md
-claude_context/
 
 # Environment variables
 .env
