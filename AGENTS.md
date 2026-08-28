@@ -60,6 +60,20 @@
 - Treat `/workspace`, `/root`, `/opt`, and `/tmp` as ephemeral. Do not place any reusable environment, dependency, data, checkpoint, config, command, log, metric, or other retained artifact there.
 - Use Conda to create, activate, and update ZAPBench environments. `zapbench-env.yaml` at the repository root is the operational environment definition; its editable `.[dev]` entry may in turn read package dependencies from `pyproject.toml`, but do not use a direct `pip install` as the environment setup workflow.
 - The persistent Conda distribution lives at `/space/conda/miniforge3`; initialize it with `source /space/conda/miniforge3/etc/profile.d/conda.sh` before `conda activate zapbench`. Conda environments live under `/space/conda/envs`, and dependency caches live under `/space/.cache`.
+- For every normal approved experiment run, reuse the installed environment without recreating, updating, or reinstalling it. After connecting to the fixed pod, the complete environment handoff is:
+
+  ```bash
+  source /space/conda/miniforge3/etc/profile.d/conda.sh
+  conda activate zapbench
+  cd /space/git/zapbench
+  ```
+
+  Then execute the exact approved command from the run card. The environment already stores `PIP_CACHE_DIR=/space/.cache/pip`; normal runs do not need to set it or install anything. If activation fails or an approved command reports a missing or incompatible dependency, stop the job and return to local development; do not repair the environment inside a normal experiment run.
+- Creating, updating, or activating the environment does not require a GPU. Do not start or wait for GPU capacity solely for environment maintenance; accelerator requirements belong to an explicitly approved model run or environment change.
+- Never silently fall back to CPU for a run that requires a GPU. If the existing environment has not already been validated for the run's required accelerator backend, treat that preparation and validation as an environment change requiring its own approved run card; do not improvise it inside a normal experiment run.
+- If an approved GPU run cannot obtain capacity, keep the same run ID, commits, command, outputs, and approval, and leave its status `planned`. Capacity waiting alone does not require a revised run card.
+- Attempt to start only pod `hzqt2j4fi0av1z`, and accept it only when it reports the GPU required by the run card. If startup fails for lack of capacity or the pod starts with `gpuCount: 0`, do not connect, activate the environment, or launch the job; stop a GPU-less running pod, report that the run is waiting for capacity, and retry the same pod every 10 minutes while the user has asked to wait. Never substitute infrastructure or fall back to CPU.
+- Once the required GPU is present, continue the already approved lifecycle. If the user cancels while waiting, stop the pod if necessary and mark the run `cancelled`.
 - Reuse the single existing Conda environment named `zapbench`. For initial setup or an approved dependency change, run `conda env create -f zapbench-env.yaml` or `conda env update -f zapbench-env.yaml` from the repository root, then `conda activate zapbench`. Make dependency changes in the committed environment or package metadata first; do not make undocumented one-off installs.
 - On RunPod, the Conda installation, `zapbench` environment prefix, package cache, and every installed dependency must live under `/space`. Reuse the existing persistent environment before considering an update, and record the reason plus the before/after environment state for approved changes.
 - A normal run assumes its environment and data are already prepared. Do not add a generic pod preflight or smoke-test layer. Any unusual setup or environment mutation must be written into and approved with that job's run card.
