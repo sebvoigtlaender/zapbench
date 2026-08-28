@@ -38,6 +38,7 @@ dependencies = [
   "tensorboard",  # required by clu metric writers
   "tensorstore",
   "tensorflow",  # required by video forecasting
+  "tf-keras",  # required when tfp-nightly imports with TensorFlow installed
   "tfp-nightly",  # required by distrax and compatible with current JAX
 ]
 
