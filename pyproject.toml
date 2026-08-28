@@ -37,8 +37,8 @@ dependencies = [
   "scikit-image",
   "tensorboard",  # required by clu metric writers
   "tensorstore",
-  "tensorflow-probability",  # required by distrax
-  "tf-keras",  # required by tensorflow-probability
+  "tensorflow",  # required by video forecasting
+  "tfp-nightly",  # required by distrax and compatible with current JAX
 ]
 
 # `version` is automatically set by flit to use `zapbench.__version__`
