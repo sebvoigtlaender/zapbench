@@ -35,6 +35,7 @@ dependencies = [
   "pandas",
   "scikit-learn",  # required for connectomics.jax.metrics
   "scikit-image",
+  "tensorboard",  # required by clu metric writers
   "tensorstore",
   "tensorflow-probability",  # required by distrax
   "tf-keras",  # required by tensorflow-probability
