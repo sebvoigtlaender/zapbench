@@ -33,6 +33,7 @@ dependencies = [
   "numpy",
   "optax",
   "pandas",
+  "python-dotenv",  # required by constants.py
   "scikit-learn",  # required for connectomics.jax.metrics
   "scikit-image",
   "tensorboard",  # required by clu metric writers
