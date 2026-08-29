@@ -119,6 +119,7 @@ class Tide(nn.Module):
       static_covariates: jax.Array,
       past_covariates: jax.Array,
       future_covariates: jax.Array,
+      poco_covariates: jax.Array | None = None,
       train: bool = False,
     ) -> jax.Array:
     """Transforms `x` with shape BxTxF -> BxT'xF using covariates.
@@ -128,6 +129,7 @@ class Tide(nn.Module):
       static_covariates: Static covariates of shape FxA.
       past_covariates: Past covariates of shape BxTxC.
       future_covariates: Future covariates of shape BxT'xC.
+      poco_covariates: Optional forecast-origin POCO covariates of shape BxP.
       train: Whether to run in training mode.
 
     Returns:
@@ -144,6 +146,10 @@ class Tide(nn.Module):
     assert future_covariates.shape[0] == num_batch
     assert future_covariates.shape[2] == num_covariates
     assert self.config.pred_len == num_timesteps_output
+    if poco_covariates is not None:
+      assert poco_covariates.ndim == 2
+      assert poco_covariates.shape[0] == num_batch
+      num_poco_covariates = poco_covariates.shape[1]
 
     if self.config.instance_norm:
       rev_in = normalization.ReversibleInstanceNorm()
@@ -202,13 +208,27 @@ class Tide(nn.Module):
     if self.config.ablate_future_covariates:
       future_covariates_projected = jnp.zeros_like(future_covariates_projected)
 
+    # Forecast-origin POCO covariates
+    if poco_covariates is not None:
+      poco_covariates = jnp.tile(
+          poco_covariates[:, jnp.newaxis, :], (1, num_features, 1)
+      )  # BxFxP
+      poco_covariates = poco_covariates.reshape(
+          num_batch * num_features, num_poco_covariates
+      )  # B*FxP
+
     # Encoder/Decoder
-    x = jnp.concatenate([
+    encoder_inputs = [
         past_timeseries,
         static_covariates,
         past_covariates_projected.reshape(num_batch * num_features, -1),
         future_covariates_projected.reshape(num_batch * num_features, -1),
-    ], axis=-1)  # (B*F)x(T+A+C'*T+C'*T')
+    ]
+    if poco_covariates is not None:
+      encoder_inputs.append(poco_covariates)
+    x = jnp.concatenate(
+        encoder_inputs, axis=-1
+    )  # (B*F)x(T+A+C_p'*T+C_f'*T'[+P])
     x = StackedMLPResidual(
         activation_fn=activation.activation_fn_from_str(
             self.config.activation),
