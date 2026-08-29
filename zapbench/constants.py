@@ -107,6 +107,15 @@ DATASET_CONFIGS = {
                     'input_labels': ['t', 'f'],
                 },
             },
+            '240930_traces_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/240930_traces_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[7879], 8],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
         'min_max_values': {
             '240930_traces': (-0.25, 1.5),
@@ -185,6 +194,15 @@ DATASET_CONFIGS = {
                     'input_labels': ['t', 'f'],
                 },
             },
+            'subject_01_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_01_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[2880], 8],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
         'min_max_values': {'subject_01': (-0.25, 3.0)},
         'position_embedding_specs': {
@@ -241,6 +259,15 @@ DATASET_CONFIGS = {
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3520], 5],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+            'subject_02_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_02_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[3520], 8],
                     'input_inclusive_min': [0, 0],
                     'input_labels': ['t', 'f'],
                 },
@@ -305,6 +332,15 @@ DATASET_CONFIGS = {
                     'input_labels': ['t', 'f'],
                 },
             },
+            'subject_03_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_03_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[2560], 8],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
         'min_max_values': {'subject_03': (-0.25, 3.0)},
         'position_embedding_specs': {
@@ -361,6 +397,15 @@ DATASET_CONFIGS = {
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 5],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+            'subject_04_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_04_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[2880], 8],
                     'input_inclusive_min': [0, 0],
                     'input_labels': ['t', 'f'],
                 },
@@ -425,6 +470,15 @@ DATASET_CONFIGS = {
                     'input_labels': ['t', 'f'],
                 },
             },
+            'subject_05_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_05_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[2880], 8],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
         'min_max_values': {'subject_05': (-0.25, 3.0)},
         'position_embedding_specs': {
@@ -485,6 +539,15 @@ DATASET_CONFIGS = {
                     'input_labels': ['t', 'f'],
                 },
             },
+            'subject_06_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_06_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[3780], 8],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
         'min_max_values': {'subject_06': (-0.25, 3.0)},
         'position_embedding_specs': {
@@ -541,6 +604,15 @@ DATASET_CONFIGS = {
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1650], 5],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+            'subject_07_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_07_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[1650], 8],
                     'input_inclusive_min': [0, 0],
                     'input_labels': ['t', 'f'],
                 },
@@ -617,6 +689,15 @@ DATASET_CONFIGS = {
                     'input_labels': ['t', 'f'],
                 },
             },
+            'subject_12_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_12_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[6140], 8],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
         'min_max_values': {'subject_12': (-0.25, 3.0)},
         'position_embedding_specs': {
@@ -685,6 +766,15 @@ DATASET_CONFIGS = {
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4840], 5],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+            'subject_13_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_13_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[4840], 8],
                     'input_inclusive_min': [0, 0],
                     'input_labels': ['t', 'f'],
                 },
@@ -761,6 +851,15 @@ DATASET_CONFIGS = {
                     'input_labels': ['t', 'f'],
                 },
             },
+            'subject_14_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_14_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[3890], 8],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
         'min_max_values': {'subject_14': (-0.25, 3.0)},
         'position_embedding_specs': {
@@ -833,6 +932,15 @@ DATASET_CONFIGS = {
                     'input_labels': ['t', 'f'],
                 },
             },
+            'subject_15_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_15_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[4880], 8],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
         },
         'min_max_values': {'subject_15': (-0.25, 3.0)},
         'position_embedding_specs': {
@@ -889,6 +997,15 @@ DATASET_CONFIGS = {
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1877], 5],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+            'subject_16_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_16_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[1877], 8],
                     'input_inclusive_min': [0, 0],
                     'input_labels': ['t', 'f'],
                 },
@@ -961,6 +1078,15 @@ DATASET_CONFIGS = {
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[5554], 5],
+                    'input_inclusive_min': [0, 0],
+                    'input_labels': ['t', 'f'],
+                },
+            },
+            'subject_17_poco_embeddings': {
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_17_poco_embeddings.zarr',
+                'driver': 'zarr3',
+                'transform': {
+                    'input_exclusive_max': [[5554], 8],
                     'input_inclusive_min': [0, 0],
                     'input_labels': ['t', 'f'],
                 },
