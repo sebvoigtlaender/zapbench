@@ -35,6 +35,7 @@ _ARGS = immutabledict.immutabledict({
     'timesteps_input': 32,
     'runlocal': False,
     'dataset_name': 'subject_01',
+    'use_poco_embeddings': False,
 })
 
 _EXPERIMENTS = {
