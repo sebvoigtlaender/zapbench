@@ -1,32 +1,32 @@
-nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,utilization.memory --format=csv
+# Illustrative command fragments. Replace the path placeholders with the exact
+# persistent run directory selected for the run.
 
 
 TRAIN
 
-CUDA_VISIBLE_DEVICES=7 python zapbench/ts_forecasting/main_train.py \
+python zapbench/ts_forecasting/main_train.py \
 --config zapbench/ts_forecasting/configs/linear.py:dataset_name='janelia_pretrain',runlocal=False,timesteps_input=32 \
---workdir /mnt/storage/misc/exp/linear/janelia_pretrain
+--workdir <persistent-run-directory>/training
 
 
 
 INFER
 
-CUDA_VISIBLE_DEVICES=7 python zapbench/ts_forecasting/main_infer.py \
---config zapbench/ts_forecasting/configs/infer.py:exp_workdir=/mnt/storage/misc/zapbench/training/n_steps_4/mean/zapbench \
---workdir /mnt/storage/misc/zapbench/inference/n_steps_4/mean/zapbench
+python zapbench/ts_forecasting/main_infer.py \
+--config zapbench/ts_forecasting/configs/infer.py:exp_workdir=<persistent-run-directory>/training \
+--workdir <persistent-run-directory>/inference
 
 
 
-CUDA_VISIBLE_DEVICES=7 python /home/sebastian/git/zapbench/zapbench/ts_forecasting/main_infer.py \
---config /home/sebastian/git/zapbench/zapbench/ts_forecasting/configs/infer.py:exp_workdir=/mnt/storage/misc/exp/timemix/subject_01 \
---workdir /mnt/storage/misc/zapbench/inference/n_steps_32/timemix/subject_01
+python zapbench/ts_forecasting/main_infer.py \
+--config zapbench/ts_forecasting/configs/infer.py:exp_workdir=<persistent-run-directory>/training \
+--workdir <persistent-run-directory>/inference
 
 
 
-CUDA_VISIBLE_DEVICES=7 python zapbench/ts_forecasting/main_train.py \
+python zapbench/ts_forecasting/main_train.py \
 --config zapbench/ts_forecasting/configs/mean.py:dataset_name='janelia_pretrain',runlocal=False,timesteps_input=4 \
---workdir /mnt/storage/misc/zapbench/training/n_steps_4/mean/janelia_pretrain
-
+--workdir <persistent-run-directory>/training
 
 
 

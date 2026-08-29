@@ -10,10 +10,10 @@ current dataset-aware time-series code is trained and evaluated. In particular:
 - `infer.sh` passes each completed training directory to inference through
   `exp_workdir` and writes results to a separate inference directory.
 
-The scripts were written for a machine with repositories under
-`/home/sebastian`, storage under `/mnt/storage`, and a usable GPU at index 7.
-Those literal paths and the GPU index are historical. They are not portable
-RunPod commands and should not be executed there verbatim.
+The scripts use repository-relative entry points and require `OUTPUT_ROOT` to
+name the parent directory beneath which they create their existing `training/`
+and `inference/` batch layout. Set `CUDA_VISIBLE_DEVICES` externally only when
+the selected host and run require it; the scripts do not choose a GPU.
 
 ## Minimal command pattern
 
@@ -49,8 +49,23 @@ for data paths and shapes; check it before running. For the `subject_NN`
 entries, set `ROOT_PATH` to the directory containing the required `ts_files/`
 subdirectory.
 
+`download_janelia.sh` also writes the raw Janelia files beneath `ROOT_PATH`,
+and `store_janelia.py` writes the converted stores beneath its `ts_files/`
+child. For example, a local batch invocation from the repository root is:
+
+```bash
+ROOT_PATH=/path/to/janelia-data \
+OUTPUT_ROOT=/path/to/zapbench-outputs \
+bash process_janelia/pre-train.sh
+```
+
+The historical inference-analysis notebooks that read the old multi-run batch
+layout use `INFERENCE_ROOT` for the directory whose children are `n_steps_*`.
+That variable only makes those archived analyses relocatable; it does not
+define the layout for new runs.
+
 For RunPod experiments, replace `<persistent-run-directory>` with the approved
 path under `/space/vault/zapbench/experiments/<experiment-id>/runs/<run-id>` and
 put the resulting literal commands in the run card. Use one command for the
-atomic run instead of modifying these historical batch scripts or adding a new
+atomic run instead of invoking a multi-run batch script or adding a new
 launcher.

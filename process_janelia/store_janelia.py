@@ -5,12 +5,11 @@ import h5py
 import numpy as np
 import scipy.io
 from dotenv import load_dotenv
-import os
 
 import tensorstore as ts
 
 load_dotenv()
-PATH = os.getenv("ROOT_PATH")
+PATH = os.environ["ROOT_PATH"]
 GIT_PATH = os.getenv("GIT_PATH")
 PATH_JANELIA = PATH
 PATH_STORE = f"{PATH}/ts_files"

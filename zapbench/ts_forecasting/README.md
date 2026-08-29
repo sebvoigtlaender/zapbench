@@ -23,10 +23,10 @@ shapes, conditions, timeseries, and covariates. Local Janelia entries resolve
 their `ts_files/` paths relative to `ROOT_PATH`.
 
 The scripts under `process_janelia/` are the operational reference for the
-current time-series training and inference command structure. Their absolute
-paths and GPU index are specific to the machine on which they were written;
-replace those values for the current host rather than running the scripts
-verbatim. See `process_janelia/README.md` for concise templates.
+current time-series training and inference command structure. They use
+repository-relative entry points and an explicit output root rather than a
+machine-specific storage mount. See `process_janelia/README.md` for concise
+templates.
 
 ## Training
 

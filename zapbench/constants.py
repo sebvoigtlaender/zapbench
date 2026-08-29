@@ -154,7 +154,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_01': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_01_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_01_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -167,7 +167,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_01_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_01_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_01_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -177,7 +177,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_01_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_01_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_01_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 5],
@@ -190,7 +190,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_01': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_01_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_01_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -214,7 +214,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_02': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_02_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_02_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -227,7 +227,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_02_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_02_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_02_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -237,7 +237,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_02_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_02_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_02_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3520], 5],
@@ -250,7 +250,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_02': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_02_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_02_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -274,7 +274,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_03': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_03_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_03_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -287,7 +287,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_03_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_03_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_03_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -297,7 +297,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_03_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_03_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_03_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2560], 5],
@@ -310,7 +310,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_03': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_03_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_03_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -334,7 +334,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_04': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_04_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_04_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -347,7 +347,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_04_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_04_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_04_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -357,7 +357,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_04_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_04_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_04_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 5],
@@ -370,7 +370,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_04': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_04_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_04_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -394,7 +394,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_05': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_05_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_05_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -407,7 +407,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_05_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_05_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_05_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -417,7 +417,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_05_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_05_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_05_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[2880], 5],
@@ -430,7 +430,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_05': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_05_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_05_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -454,7 +454,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_06': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_06_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_06_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -467,7 +467,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_06_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_06_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_06_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -477,7 +477,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_06_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_06_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_06_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3780], 5],
@@ -490,7 +490,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_06': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_06_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_06_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -514,7 +514,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_07': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_07_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_07_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -527,7 +527,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_07_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_07_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_07_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -537,7 +537,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_07_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_07_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_07_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1650], 5],
@@ -550,7 +550,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_07': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_07_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_07_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -586,7 +586,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_12': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_12_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_12_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -599,7 +599,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_12_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_12_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_12_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -609,7 +609,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_12_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_12_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_12_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[6140], 5],
@@ -622,7 +622,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_12': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_12_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_12_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -658,7 +658,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_13': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_13_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_13_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -671,7 +671,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_13_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_13_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_13_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -681,7 +681,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_13_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_13_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_13_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4840], 5],
@@ -694,7 +694,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_13': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_13_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_13_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -730,7 +730,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_14': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_14_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_14_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -743,7 +743,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_14_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_14_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_14_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -753,7 +753,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_14_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_14_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_14_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[3890], 5],
@@ -766,7 +766,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_14': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_14_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_14_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -802,7 +802,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_15': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_15_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_15_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -815,7 +815,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_15_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_15_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_15_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -825,7 +825,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_15_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_15_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_15_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[4880], 5],
@@ -838,7 +838,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_15': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_15_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_15_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -862,7 +862,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_16': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_16_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_16_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -875,7 +875,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_16_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_16_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_16_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -885,7 +885,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_16_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_16_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_16_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[1877], 5],
@@ -898,7 +898,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_16': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_16_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_16_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -934,7 +934,7 @@ DATASET_CONFIGS = {
         'specs': {
             'subject_17': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_17_traces.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_17_traces.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -947,7 +947,7 @@ DATASET_CONFIGS = {
         'covariate_specs': {
             'subject_17_stimuli_features': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_17_stimuli.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_17_stimuli.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -957,7 +957,7 @@ DATASET_CONFIGS = {
                 },
             },
             'subject_17_behavioral_covariates': {
-                'kvstore': f'file:///{ROOT_PATH}/ts_files/subject_17_behavioral_covariates.zarr',
+                'kvstore': f'file://{ROOT_PATH}/ts_files/subject_17_behavioral_covariates.zarr',
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[5554], 5],
@@ -970,7 +970,7 @@ DATASET_CONFIGS = {
         'position_embedding_specs': {
             'subject_17': {
                 'kvstore': (
-                    f'file:///{ROOT_PATH}/ts_files/subject_17_coordinates.zarr'
+                    f'file://{ROOT_PATH}/ts_files/subject_17_coordinates.zarr'
                 ),
                 'driver': 'zarr3',
                 'transform': {
@@ -993,7 +993,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'janelia_pretrain_stimuli_features',
         'specs': {
             'janelia_pretrain': {
-                'kvstore': f'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_traces.zarr',
+                'kvstore': (
+                    f'file://{ROOT_PATH}/ts_files/janelia_pretrain_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[37247], 50000],
@@ -1004,7 +1006,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'janelia_pretrain_stimuli_features': {
-                'kvstore': f'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_stimuli.zarr',
+                'kvstore': (
+                    f'file://{ROOT_PATH}/ts_files/janelia_pretrain_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[37247], 16],
