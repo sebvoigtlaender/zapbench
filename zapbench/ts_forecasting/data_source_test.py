@@ -144,6 +144,81 @@ class DataSourceTest(parameterized.TestCase):
     for k in ('ds1_input', 'ds1_input', 'ds2_input', 'ds2_output', 'timestep'):
       assert k in batch
 
+  def test_merged_data_source_without_poco_is_unchanged(self):
+    covariates = data_source.TensorStoreTimeSeries(
+        self.default_config, prefix='covariates'
+    )
+    merged = data_source.MergedTensorStoreTimeSeries(covariates)
+
+    expected = covariates[3]
+    actual = merged[3]
+
+    self.assertEqual(actual.keys(), expected.keys())
+    self.assertEqual(merged.item_shape, covariates.item_shape)
+    for key in actual:
+      np.testing.assert_array_equal(actual[key], expected[key])
+
+  def test_merged_data_source_selects_poco_at_forecast_origin(self):
+    num_timesteps = 12
+    num_covariates = 3
+    num_poco_features = 8
+    timesteps_input = 4
+    timesteps_output = 2
+    covariate_values = np.arange(
+        num_timesteps * num_covariates, dtype=np.float32
+    ).reshape(num_timesteps, num_covariates)
+    poco_values = np.repeat(
+        np.arange(num_timesteps, dtype=np.float32)[:, np.newaxis],
+        num_poco_features,
+        axis=1,
+    )
+
+    def source(values: np.ndarray, prefix: str):
+      return data_source.TensorStoreTimeSeries(
+          data_source.TensorStoreTimeSeriesConfig(
+              input_spec={
+                  'driver': 'array',
+                  'dtype': 'float32',
+                  'array': values.tolist(),
+              },
+              timesteps_input=timesteps_input,
+              timesteps_output=timesteps_output,
+          ),
+          prefix=prefix,
+      )
+
+    merged = data_source.MergedTensorStoreTimeSeries(
+        source(covariate_values, 'covariates'),
+        source(poco_values, 'poco_embeddings'),
+    )
+    record_key = 3
+    batch = merged[record_key]
+
+    np.testing.assert_array_equal(
+        batch['covariates_input'],
+        covariate_values[record_key : record_key + timesteps_input],
+    )
+    np.testing.assert_array_equal(
+        batch['covariates_output'],
+        covariate_values[
+            record_key
+            + timesteps_input : record_key
+            + timesteps_input
+            + timesteps_output
+        ],
+    )
+    np.testing.assert_array_equal(
+        batch['poco_covariates'],
+        np.full(
+            (num_poco_features,),
+            record_key + timesteps_input,
+            dtype=np.float32,
+        ),
+    )
+    self.assertEqual(merged.item_shape['poco_covariates'], (num_poco_features,))
+    self.assertNotIn('poco_embeddings_input', batch)
+    self.assertNotIn('poco_embeddings_output', batch)
+
   def test_concatenated_data_source(self):
     ds1 = data_source.TensorStoreTimeSeries(self.default_config)
     ds2 = data_source.TensorStoreTimeSeries(self.default_config)

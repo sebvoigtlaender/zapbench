@@ -32,11 +32,12 @@ def _get_specs(
     covariate_series: str,
     soma_ids: Sequence[int],
     dataset_name: str,
+    poco_embeddings_series: str | None = None,
 ) -> Sequence[dict[str, Any]]:
   """Get specs with dataset-aware context."""
   specs = []
   for condition in conditions:
-    specs.append({
+    condition_specs = {
         'timeseries': data_utils.adjust_spec_for_condition_and_split(
             spec=data_utils.get_spec(
                 timeseries, soma_ids, dataset_name=dataset_name
@@ -55,7 +56,20 @@ def _get_specs(
             num_timesteps_context=num_timesteps_context,
             dataset_name=dataset_name,
         ).to_json(),
-    })
+    }
+    if poco_embeddings_series is not None:
+      condition_specs['poco_embeddings'] = (
+          data_utils.adjust_spec_for_condition_and_split(
+              spec=data_utils.get_covariate_spec(
+                  poco_embeddings_series, dataset_name=dataset_name
+              ),
+              condition=condition,
+              split=split,
+              num_timesteps_context=num_timesteps_context,
+              dataset_name=dataset_name,
+          ).to_json()
+      )
+    specs.append(condition_specs)
   return specs
 
 
@@ -120,6 +134,7 @@ def get_config(
     runlocal: bool = False,
     timeseries: str = None,
     covariate_series: str = None,
+    poco_embeddings_series: str = None,
     val_ckpt_every_steps: int = 250,
     log_loss_every_steps: int = 100,
     seed: int | tuple[int, int] | None = -1,
@@ -139,6 +154,8 @@ def get_config(
     runlocal: Whether running locally or remotely.
     timeseries: Name of the timeseries in dataset specs. If None, uses dataset default.
     covariate_series: Name of the covariates in dataset covariate specs. If None, uses dataset default.
+    poco_embeddings_series: Optional POCO embedding series to expose as a
+      separate forecast-origin model input.
     val_ckpt_every_steps: Frequency of validation/checkpointing.
     log_loss_every_steps: Frequency of logging loss.
     seed: Optional random seed. Uses a randomly generated seed if None or
@@ -248,6 +265,7 @@ def get_config(
       covariate_series=c.covariate_series,
       soma_ids=soma_ids,
       dataset_name=dataset_name,
+      poco_embeddings_series=poco_embeddings_series,
   )
 
   # Validation
@@ -259,6 +277,7 @@ def get_config(
       covariate_series=c.covariate_series,
       soma_ids=soma_ids,
       dataset_name=dataset_name,
+      poco_embeddings_series=poco_embeddings_series,
   )
   c.num_val_steps = -1  # = 0 to disable, = -1 to iterate over val batches
   c.val_pad_last_batch = False
@@ -275,6 +294,10 @@ def get_config(
           c.covariate_series, dataset_name=dataset_name
       ).to_json(),
   }
+  if poco_embeddings_series is not None:
+    c.infer_spec['poco_embeddings'] = data_utils.get_covariate_spec(
+        poco_embeddings_series, dataset_name=dataset_name
+    ).to_json()
   if 'condition_offsets' in dataset_config:
     c.infer_sets = get_infer_sets(
         num_timesteps_context=c.timesteps_input_infer
@@ -287,7 +310,10 @@ def get_config(
         + c.num_warmup_infer_steps,
         dataset_name=dataset_name,
     )
-  c.infer_batching_str = 'expand_dims(keys=("timeseries_input","timeseries_output","covariates_input","covariates_output"),axis=0)'  # 1x...  # pylint: disable=line-too-long
+  if poco_embeddings_series is None:
+    c.infer_batching_str = 'expand_dims(keys=("timeseries_input","timeseries_output","covariates_input","covariates_output"),axis=0)'  # 1x...  # pylint: disable=line-too-long
+  else:
+    c.infer_batching_str = 'expand_dims(keys=("timeseries_input","timeseries_output","covariates_input","covariates_output","poco_embeddings_input","poco_embeddings_output"),axis=0)'  # 1x...  # pylint: disable=line-too-long
   c.infer_save_array = True
   # {workdir}, {step} will be replaced, if present in prefix:
   c.infer_prefix = 'file://{workdir}/inference/step/{step}'
