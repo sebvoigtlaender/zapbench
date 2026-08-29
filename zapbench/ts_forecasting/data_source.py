@@ -197,6 +197,13 @@ class MergedTensorStoreTimeSeries:
     out = dict()
     for s in self.srcs:
       out.update(s[record_key])
+    if 'poco_embeddings_input' in out:
+      if 'poco_embeddings_output' not in out:
+        raise ValueError('POCO embedding source is missing its output window.')
+      out.pop('poco_embeddings_input')
+      # The first output row is the forecast origin s+c. The producer/store
+      # contract requires that row to use only history available before s+c.
+      out['poco_covariates'] = out.pop('poco_embeddings_output')[..., 0, :]
     return out
 
   def __repr__(self) -> str:
@@ -207,6 +214,9 @@ class MergedTensorStoreTimeSeries:
     out = dict()
     for s in self.srcs:
       out.update(s.item_shape)
+    if 'poco_embeddings_input' in out:
+      out.pop('poco_embeddings_input')
+      out['poco_covariates'] = (out.pop('poco_embeddings_output')[-1],)
     return out
 
 

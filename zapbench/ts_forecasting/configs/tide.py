@@ -69,7 +69,24 @@ def get_config(arg: str | None = None) -> mlc.ConfigDict:
   config = mlc.ConfigDict()
 
   config.arg = config_util.parse_arg(arg, **_ARGS)
-  config.update(common.get_config(**config.arg))
+  poco_embeddings_series = None
+  poco_embeddings_spec = None
+  if config.arg.use_poco_embeddings:
+    poco_embeddings_series = f'{config.arg.dataset_name}_poco_embeddings'
+    poco_embeddings_spec = data_utils.get_covariate_spec(
+        poco_embeddings_series, config.arg.dataset_name
+    )
+    if poco_embeddings_spec.rank != 2 or poco_embeddings_spec.shape[-1] != 8:
+      raise ValueError(
+          f'{poco_embeddings_series} must have shape (T, 8), got '
+          f'{poco_embeddings_spec.shape}.'
+      )
+  config.update(
+      common.get_config(
+          **config.arg, poco_embeddings_series=poco_embeddings_series
+      )
+  )
+  config.use_poco_embeddings = config.arg.use_poco_embeddings
 
   # NOTE: Tide was trained on 16 devices in parallel for the manuscript.
   config.per_device_batch_size = 1
@@ -79,16 +96,21 @@ def get_config(arg: str | None = None) -> mlc.ConfigDict:
   dynamic_covariates_spec = data_utils.get_covariate_spec(
       config.covariate_series, config.dataset_name)
 
-  config.covariates = (
+  covariates = [
       'covariates_static',
       'covariates_input',
       'covariates_output',
-  )
-  config.covariates_shapes = (
+  ]
+  covariates_shapes = [
       static_covariates_spec.shape,
       (1, config.timesteps_input, dynamic_covariates_spec.shape[-1]),
       (1, config.timesteps_output, dynamic_covariates_spec.shape[-1]),
-  )
+  ]
+  if poco_embeddings_spec is not None:
+    covariates.append('poco_covariates')
+    covariates_shapes.append((1, poco_embeddings_spec.shape[-1]))
+  config.covariates = tuple(covariates)
+  config.covariates_shapes = tuple(covariates_shapes)
   config.static_covariates_spec = static_covariates_spec.to_json()
 
   config.model_class = 'tide.Tide'
