@@ -993,7 +993,9 @@ DATASET_CONFIGS = {
         'covariate_series_name': 'janelia_pretrain_stimuli_features',
         'specs': {
             'janelia_pretrain': {
-                'kvstore': f'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_traces.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/janelia_pretrain_traces.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[37247], 50000],
@@ -1004,7 +1006,9 @@ DATASET_CONFIGS = {
         },
         'covariate_specs': {
             'janelia_pretrain_stimuli_features': {
-                'kvstore': f'file:///mnt/storage/misc/zapbench/data/ts_files/janelia_pretrain_stimuli.zarr',
+                'kvstore': (
+                    f'file:///{ROOT_PATH}/ts_files/janelia_pretrain_stimuli.zarr'
+                ),
                 'driver': 'zarr3',
                 'transform': {
                     'input_exclusive_max': [[37247], 16],

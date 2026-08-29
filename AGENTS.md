@@ -33,7 +33,7 @@
 
 ## Time-series training and inference contract
 
-- Treat `process_janelia/train.sh`, `process_janelia/train_zapbench.sh`, `process_janelia/pre-train.sh`, and `process_janelia/infer.sh` as the source of truth for the current time-series invocation pattern. Their `/home/sebastian`, `/mnt/storage`, and `CUDA_VISIBLE_DEVICES=7` values describe the machine on which they were written; do not copy those machine-specific values to RunPod.
+- Treat `process_janelia/train.sh`, `process_janelia/train_zapbench.sh`, `process_janelia/pre-train.sh`, and `process_janelia/infer.sh` as the source of truth for the current time-series invocation pattern. They use repository-relative entry points and require an explicit `OUTPUT_ROOT` for their local batch layout. They do not replace the literal one-run commands in an approved RunPod run card; select a GPU externally only when the exact run requires it.
 - Run the time-series entry points from the repository root. Training uses `zapbench/ts_forecasting/main_train.py` with a model config and concise overrides; inference uses `zapbench/ts_forecasting/main_infer.py`, with the completed training directory supplied as `exp_workdir`:
 
   ```bash

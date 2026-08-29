@@ -6,7 +6,8 @@ FILE_IDS=(
     13485524 13488344 13488416 14298635 14299349
 )
 BASE_URL="https://janelia.figshare.com/ndownloader/files"
-DOWNLOAD_DIR="/home/sebastian/data/janelia"
+: "${ROOT_PATH:?Set ROOT_PATH to the directory that will contain the Janelia data and ts_files/}"
+DOWNLOAD_DIR="${ROOT_PATH}"
 
 # Create download directory if it doesn't exist
 mkdir -p "$DOWNLOAD_DIR"

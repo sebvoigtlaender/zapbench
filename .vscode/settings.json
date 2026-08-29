@@ -30,6 +30,5 @@
     },
     "python.testing.pytestArgs": [
         "."
-    ],
-    "python.defaultInterpreterPath": "/home/sebastian/git/zapbench/.pixi/envs/default/bin/python"
+    ]
 }
